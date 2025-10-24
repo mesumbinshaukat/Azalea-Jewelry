@@ -1,0 +1,324 @@
+{% doc %}
+  @prompt
+    i need horizantal sider where logo images animate like amimate to left side, all good but 1st logo and second set these both to like other
+
+{% enddoc %}
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-logo-slider-{{ ai_gen_id }} {
+    width: 100%;
+    overflow: hidden;
+    background-color: {{ block.settings.background_color }};
+    padding: {{ block.settings.padding_vertical }}px 0;
+  }
+
+  .ai-logo-slider__track-{{ ai_gen_id }} {
+    display: flex;
+    width: calc(200% + {{ block.settings.logo_spacing }}px);
+    animation: ai-logo-slide-{{ ai_gen_id }} {{ block.settings.animation_speed }}s linear infinite;
+  }
+
+  .ai-logo-slider__group-{{ ai_gen_id }} {
+    display: flex;
+    width: 50%;
+    gap: {{ block.settings.logo_spacing }}px;
+    align-items: center;
+  }
+
+  .ai-logo-slider__item-{{ ai_gen_id }} {
+    flex: 0 0 auto;
+    width: {{ block.settings.logo_width }}px;
+    height: {{ block.settings.logo_height }}px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-logo-slider__image-{{ ai_gen_id }} {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    opacity: {{ block.settings.logo_opacity | divided_by: 100.0 }};
+    transition: opacity 0.3s ease;
+  }
+
+  .ai-logo-slider__image-{{ ai_gen_id }}:hover {
+    opacity: 1;
+  }
+
+  .ai-logo-slider__placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+  }
+
+  .ai-logo-slider__placeholder-{{ ai_gen_id }} svg {
+    width: 60%;
+    height: 60%;
+    opacity: 0.3;
+  }
+
+  .ai-logo-slider__empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    color: #666;
+    text-align: center;
+    white-space: nowrap;
+  }
+
+  {% if block.settings.pause_on_hover %}
+    .ai-logo-slider-{{ ai_gen_id }}:hover .ai-logo-slider__track-{{ ai_gen_id }} {
+      animation-play-state: paused;
+    }
+  {% endif %}
+
+  @keyframes ai-logo-slide-{{ ai_gen_id }} {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(calc(-50% - {{ block.settings.logo_spacing | divided_by: 2 }}px));
+    }
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-logo-slider__item-{{ ai_gen_id }} {
+      width: {{ block.settings.logo_width | times: 0.8 }}px;
+      height: {{ block.settings.logo_height | times: 0.8 }}px;
+    }
+  }
+{% endstyle %}
+
+<div class="ai-logo-slider-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-logo-slider__track-{{ ai_gen_id }}">
+    <div class="ai-logo-slider__group-{{ ai_gen_id }}">
+      {% for i in (1..8) %}
+        {% assign logo_key = 'logo_' | append: i %}
+        {% assign logo = block.settings[logo_key] %}
+        
+        <div class="ai-logo-slider__item-{{ ai_gen_id }}">
+          {% if logo != blank %}
+            <img
+              src="{{ logo | image_url: width: 200}}"
+              alt="{{ logo.alt | escape }}"
+              class="ai-logo-slider__image-{{ ai_gen_id }}"
+              loading="lazy"
+              width="{{ block.settings.logo_width }}"
+              height="{{ block.settings.logo_height }}"
+            >
+          {% else %}
+            <div class="ai-logo-slider__placeholder-{{ ai_gen_id }}">
+              {{ 'image' | placeholder_svg_tag }}<div class="ai-logo-slider__empty-state-{{ ai_gen_id }}">
+                Add logo {{ i }}
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div><div class="ai-logo-slider__group-{{ ai_gen_id }}">
+      {% for i in (1..8) %}
+        {% assign logo_key = 'logo_' | append: i %}
+        {% assign logo = block.settings[logo_key] %}
+        
+        <div class="ai-logo-slider__item-{{ ai_gen_id }}">
+          {% if logo != blank %}
+            <img
+              src="{{ logo | image_url: width: 200 }}"
+              alt="{{ logo.alt | escape }}"
+              class="ai-logo-slider__image-{{ ai_gen_id }}"
+              loading="lazy"
+              width="{{ block.settings.logo_width }}"
+              height="{{ block.settings.logo_height }}"
+            >
+          {% else %}
+            <div class="ai-logo-slider__placeholder-{{ ai_gen_id }}">
+              {{ 'image' | placeholder_svg_tag }}
+              <div class="ai-logo-slider__empty-state-{{ ai_gen_id }}">
+                Add logo {{ i }}
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Logo slider",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "logo_width",
+      "min": 60,
+      "max": 200,
+      "step": 10,
+      "unit": "px",
+      "label": "Logo width",
+      "default": 120
+    },
+    {
+      "type": "range",
+      "id": "logo_height",
+      "min": 40,
+      "max": 120,
+      "step": 10,
+      "unit": "px",
+      "label": "Logo height",
+      "default": 60
+    },
+    {
+      "type": "range",
+      "id": "logo_spacing",
+      "min": 20,
+      "max": 100,
+      "step": 10,
+      "unit": "px",
+      "label": "Space between logos",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "min": 20,
+      "max": 80,
+      "step": 10,
+      "unit": "px",
+      "label": "Vertical padding",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Style"
+    },
+    {
+      "type": "color",
+      "id": "background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "logo_opacity",
+      "min": 30,
+      "max": 100,
+      "step": 10,
+      "unit": "%",
+      "label": "Logo opacity",
+      "default": 70
+    },
+    {
+      "type": "header",
+      "content": "Animation"
+    },
+    {
+      "type": "range",
+      "id": "animation_speed",
+      "min": 10,
+      "max": 60,
+      "step": 5,
+      "unit": "s",
+      "label": "Animation speed",
+      "default": 30
+    },
+    {
+      "type": "checkbox",
+      "id": "pause_on_hover",
+      "label": "Pause on hover",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Logo 1"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo_1",
+      "label": "Logo image"
+    },
+    {
+      "type": "header",
+      "content": "Logo 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo_2",
+      "label": "Logo image"
+    },
+    {
+      "type": "header",
+      "content": "Logo 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo_3",
+      "label": "Logo image"
+    },
+    {
+      "type": "header",
+      "content": "Logo 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo_4",
+      "label": "Logo image"
+    },
+    {
+      "type": "header",
+      "content": "Logo 5"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo_5",
+      "label": "Logo image"
+    },
+    {
+      "type": "header",
+      "content": "Logo 6"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo_6",
+      "label": "Logo image"
+    },
+    {
+      "type": "header",
+      "content": "Logo 7"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo_7",
+      "label": "Logo image"
+    },
+    {
+      "type": "header",
+      "content": "Logo 8"
+    },
+    {
+      "type": "image_picker",
+      "id": "logo_8",
+      "label": "Logo image"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Logo slider"
+    }
+  ],
+  "tag": null
+}
+{% endschema %}

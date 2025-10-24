@@ -1,0 +1,604 @@
+
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-collection-scroll-{{ ai_gen_id }} {
+    position: relative;
+    margin: 0 10px;
+    padding: 20px 0;
+  }
+
+  .ai-collection-scroll__container-{{ ai_gen_id }} {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  .ai-collection-scroll__arrow-{{ ai_gen_id }} {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background-color: {{ block.settings.arrow_background_color }};
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: {{ block.settings.arrow_color }};
+    transition: all 0.3s ease;
+    flex-shrink: 0;
+    z-index: 2;
+  }
+
+  .ai-collection-scroll__arrow-{{ ai_gen_id }}:hover:not(:disabled) {
+    background-color: {{ block.settings.arrow_hover_background_color }};
+    transform: scale(1.1);
+  }
+
+  .ai-collection-scroll__arrow-{{ ai_gen_id }}:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .ai-collection-scroll__viewport-{{ ai_gen_id }} {
+    overflow: hidden;
+    flex-grow: 1;
+  }
+
+  .ai-collection-scroll__track-{{ ai_gen_id }} {
+    display: flex;
+    gap: {{ block.settings.item_spacing }}px;
+    transition: transform 0.4s ease;
+    will-change: transform;
+  }
+
+  .ai-collection-scroll__item-{{ ai_gen_id }} {
+    flex: 0 0 calc((100% - (7 * {{ block.settings.item_spacing }}px)) / 8);
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .ai-collection-scroll__image-container-{{ ai_gen_id }} {
+    width: 100%;
+    aspect-ratio: 1;
+    border-radius: {{ block.settings.image_border_radius }}px;
+    overflow: hidden;
+    margin-bottom: 12px;
+    position: relative;
+  }
+
+  .ai-collection-scroll__image-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+
+  .ai-collection-scroll__item-{{ ai_gen_id }}:hover .ai-collection-scroll__image-{{ ai_gen_id }} {
+    transform: scale(1.05);
+  }
+
+  .ai-collection-scroll__placeholder-{{ ai_gen_id }} {
+    width: 100%;
+    height: 100%;
+    background-color: #f4f4f4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-collection-scroll__placeholder-{{ ai_gen_id }} svg {
+    width: 50%;
+    height: 50%;
+    opacity: 0.5;
+  }
+
+  .ai-collection-scroll__title-{{ ai_gen_id }} {
+    font-size: {{ block.settings.title_font_size }}px;
+    font-weight: {{ block.settings.title_font_weight }};
+    color: {{ block.settings.title_color }};
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .ai-collection-scroll__empty-state-{{ ai_gen_id }} {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 12px;
+    color: #666;
+    background: rgba(255, 255, 255, 0.9);
+    padding: 4px 8px;
+    border-radius: 4px;
+    pointer-events: none;
+  }
+
+  @media screen and (max-width: 749px) {
+    .ai-collection-scroll__item-{{ ai_gen_id }} {
+      flex: 0 0 calc((100% - (3 * {{ block.settings.item_spacing }}px)) / 4);
+    }
+  }
+
+  @media screen and (max-width: 479px) {
+    .ai-collection-scroll__item-{{ ai_gen_id }} {
+      flex: 0 0 calc((100% - (2 * {{ block.settings.item_spacing }}px)) / 3);
+    }
+  }
+{% assign styles = '' %}
+{% for product in collection.products %}
+  {% assign style = product.metafields.custom.style %}
+  {% if style and styles contains style == false %}
+    {% assign styles = styles | append: style | append: ',' %}
+  {% endif %}
+{% endfor %}
+{% assign styles_array = styles | split: ',' %}
+  class="ai-collection-scroll-{{ ai_gen_id }}"
+  {{ block.shopify_attributes }}
+>
+  <div class="ai-collection-scroll__container-{{ ai_gen_id }}"><button
+      class="ai-collection-scroll__arrow-{{ ai_gen_id }} ai-collection-scroll__arrow--left-{{ ai_gen_id }}"
+      aria-label="Scroll left"
+      disabled
+    >
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="15,18 9,12 15,6"></polyline>
+      </svg>
+    </button>
+
+    <div class="ai-collection-scroll__viewport-{{ ai_gen_id }}">
+      <div class="ai-collection-scroll__track-{{ ai_gen_id }}">
+        {% for i in (1..9) %}
+          {% liquid
+            assign image_key = 'image_' | append: i
+            assign title_key = 'title_' | append: i
+            assign link_key = 'link_' | append: i
+            assign image = block.settings[image_key]
+            assign title = block.settings[title_key]
+            assign link = block.settings[link_key]
+          %}
+
+          {% if link != blank %}
+            <a
+              href="{{ link }}"
+              class="ai-collection-scroll__item-{{ ai_gen_id }}"
+            >
+              <div class="ai-collection-scroll__image-container-{{ ai_gen_id }}">
+                {% if image %}
+                  <img
+                    src="{{ image | image_url: width: 300 }}"
+                    alt="{{ image.alt | escape }}"
+                    class="ai-collection-scroll__image-{{ ai_gen_id }}"loading="lazy"
+                    width="300"
+                    height="300"
+                  >
+                {% else %}
+                  <div class="ai-collection-scroll__placeholder-{{ ai_gen_id }}">
+                    {{ 'collection-apparel-1' | placeholder_svg_tag }}
+                  </div>
+                {% endif %}
+              </div>
+              <h3 class="ai-collection-scroll__title-{{ ai_gen_id }}">
+                {% if title != blank %}
+                  {{ title }}
+                {% else %}
+                  Category {{ i }}
+                {% endif %}
+              </h3>
+            </a>
+          {% else %}
+            <div class="ai-collection-scroll__item-{{ ai_gen_id }}">
+              <div class="ai-collection-scroll__image-container-{{ ai_gen_id }}">
+                {% if image %}
+                  <img
+                    src="{{ image | image_url: width: 300 }}"
+                    alt="{{ image.alt | escape }}"
+                    class="ai-collection-scroll__image-{{ ai_gen_id }}"
+                    loading="lazy"
+                    width="300"
+                    height="300"
+                  >
+                {% else %}
+                  <div class="ai-collection-scroll__placeholder-{{ ai_gen_id }}">
+                    {{ 'collection-apparel-1' | placeholder_svg_tag }}<div class="ai-collection-scroll__empty-state-{{ ai_gen_id }}">
+                      Add image and link {{ i }}
+                    </div>
+                  </div>
+                {% endif %}
+              </div>
+              <h3 class="ai-collection-scroll__title-{{ ai_gen_id }}">
+                {% if title != blank %}
+                  {{ title }}
+                {% else %}
+                  Category {{ i }}
+                {% endif %}
+              </h3>
+            </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+
+    <button
+      class="ai-collection-scroll__arrow-{{ ai_gen_id }} ai-collection-scroll__arrow--right-{{ ai_gen_id }}"
+      aria-label="Scroll right"
+    >
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="9,18 15,12 9,6"></polyline>
+      </svg>
+    </button>
+  </div>
+</collection-scroll-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class CollectionScroll{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.currentIndex = 0;
+        this.itemsVisible = 8;
+        this.totalItems = 9;
+        this.maxIndex = this.totalItems - this.itemsVisible;
+      }
+
+      connectedCallback() {
+        this.track = this.querySelector('.ai-collection-scroll__track-{{ ai_gen_id }}');
+        this.leftArrow = this.querySelector('.ai-collection-scroll__arrow--left-{{ ai_gen_id }}');
+        this.rightArrow = this.querySelector('.ai-collection-scroll__arrow--right-{{ ai_gen_id }}');
+        this.viewport = this.querySelector('.ai-collection-scroll__viewport-{{ ai_gen_id }}');
+
+        this.setupEventListeners();
+        this.updateArrowStates();
+        this.updateItemsVisible();
+      }
+
+      setupEventListeners() {
+        this.leftArrow.addEventListener('click', () => this.scrollLeft());
+        this.rightArrow.addEventListener('click', () => this.scrollRight());
+
+        this.viewport.addEventListener('wheel', (e) => {
+          e.preventDefault();
+          if (e.deltaX > 0 || e.deltaY > 0) {
+            this.scrollRight();
+          } else {
+            this.scrollLeft();
+          }
+        });
+
+        window.addEventListener('resize', () => this.updateItemsVisible());
+      }
+
+      updateItemsVisible() {
+        const viewportWidth = window.innerWidth;
+        if (viewportWidth <= 479) {
+          this.itemsVisible = 3;
+        } else if (viewportWidth <= 749) {
+          this.itemsVisible = 4;
+        } else {
+          this.itemsVisible = 8;
+        }
+        this.maxIndex = Math.max(0, this.totalItems - this.itemsVisible);
+        this.currentIndex = Math.min(this.currentIndex, this.maxIndex);this.updateTransform();
+        this.updateArrowStates();
+      }
+
+      scrollLeft() {
+        if (this.currentIndex > 0) {
+          this.currentIndex--;
+          this.updateTransform();
+          this.updateArrowStates();
+        }
+      }
+
+      scrollRight() {
+        if (this.currentIndex < this.maxIndex) {
+          this.currentIndex++;
+          this.updateTransform();
+          this.updateArrowStates();
+        }
+      }
+
+      updateTransform() {
+        const itemWidth = 100 / this.itemsVisible;
+        const translateX = -(this.currentIndex * itemWidth);
+        this.track.style.transform = `translateX(${translateX}%)`;
+      }
+
+      updateArrowStates() {
+        this.leftArrow.disabled = this.currentIndex === 0;
+        this.rightArrow.disabled = this.currentIndex >= this.maxIndex;
+      }
+    }
+
+    customElements.define('collection-scroll-{{ ai_gen_id }}', CollectionScroll{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Category scroll",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Category1"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_1",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "title_1",
+      "label": "Title",
+      "default": "Category 1"
+    },
+    {
+      "type": "url",
+      "id": "link_1",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Category 2"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_2",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "title_2",
+      "label": "Title",
+      "default": "Category 2"
+    },
+    {
+      "type": "url",
+      "id": "link_2",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Category 3"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_3",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "title_3",
+      "label": "Title",
+      "default": "Category 3"
+    },
+    {
+      "type": "url",
+      "id": "link_3",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Category 4"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_4",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "title_4",
+      "label": "Title",
+      "default": "Category 4"
+    },
+    {
+      "type": "url",
+      "id": "link_4",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Category 5"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_5",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "title_5",
+      "label": "Title",
+      "default": "Category 5"
+    },
+    {
+      "type": "url",
+      "id": "link_5",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Category 6"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_6",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "title_6",
+      "label": "Title",
+      "default": "Category 6"
+    },
+    {
+      "type": "url",
+      "id": "link_6",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Category 7"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_7",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "title_7",
+      "label": "Title",
+      "default": "Category 7"
+    },
+    {
+      "type": "url",
+      "id": "link_7",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Category 8"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_8",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "title_8",
+      "label": "Title",
+      "default": "Category 8"
+    },
+    {
+      "type": "url",
+      "id": "link_8",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Category 9"
+    },
+    {
+      "type": "image_picker",
+      "id": "image_9",
+      "label": "Image"
+    },
+    {
+      "type": "text",
+      "id": "title_9",
+      "label": "Title",
+      "default": "Category 9"
+    },
+    {
+      "type": "url",
+      "id": "link_9",
+      "label": "Link"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "item_spacing",
+      "min": 10,
+      "max": 40,
+      "step": 5,
+      "unit": "px",
+      "label": "Item spacing",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "min": 0,
+      "max": 20,
+      "step": 2,
+      "unit": "px",
+      "label": "Image border radius",
+      "default": 8
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "title_font_size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "label": "Title font size",
+      "default": 16
+    },
+    {
+      "type": "select",
+      "id": "title_font_weight",
+      "label": "Title font weight",
+      "options": [
+        {
+          "value": "400",
+          "label": "Normal"
+        },
+        {
+          "value": "500",
+          "label": "Medium"
+        },
+        {
+          "value": "600",
+          "label": "Semi bold"
+        },
+        {
+          "value": "700",
+          "label": "Bold"
+        }
+      ],
+      "default": "500"
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#000000"
+    },
+    {
+      "type": "header",
+      "content": "Arrow buttons"
+    },
+    {
+      "type": "color",
+      "id": "arrow_background_color",
+      "label": "Background color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color",
+      "id": "arrow_hover_background_color",
+      "label": "Hover background color",
+      "default": "#f4f4f4"
+    },
+    {
+      "type": "color",
+      "id": "arrow_color",
+      "label": "Arrow color",
+      "default": "#000000"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Category scroll"
+    }
+  ]
+}
+{% endschema %}
