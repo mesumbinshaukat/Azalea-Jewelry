@@ -466,8 +466,6 @@
         const normalized = (style || '').toLowerCase();
         let visibleCount = 0;
 
-        console.log('ProductShowcase{{ ai_gen_id }} applying filter for style:', style || '(all styles)');
-
         this.cards.forEach((card) => {
           const cardStyle = (card.dataset.style || '').toLowerCase();
           const cardTitleElement = card.querySelector('[data-product-title]');
@@ -480,12 +478,6 @@
           if (shouldShow) {
             visibleCount += 1;
           }
-
-          console.log('ProductShowcase{{ ai_gen_id }} card evaluation:', {
-            title: cardTitle,
-            style: card.dataset.style || '(none)',
-            matches: shouldShow
-          });
         });
 
         if (this.emptyState) {
@@ -503,7 +495,6 @@
 
       logAvailableStyles() {
         if (!this.cards || this.cards.length === 0) {
-          console.log('ProductShowcase{{ ai_gen_id }} found no product cards to analyze.');
           return;
         }
 
@@ -522,9 +513,6 @@
           }
           styleMap[styleKey].push(title);
         });
-
-        console.log('ProductShowcase{{ ai_gen_id }} available styles:', Array.from(styleSet));
-        console.log('ProductShowcase{{ ai_gen_id }} style to titles map:', styleMap);
       }
     }
   

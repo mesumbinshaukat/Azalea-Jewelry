@@ -327,8 +327,6 @@
             window.history.pushState({}, '', url.toString());
           }
 
-          console.log('CollectionScroll{{ ai_gen_id }} selecting style:', style || '(all styles)');
-
           window.dispatchEvent(
             new CustomEvent('style:filter', {
               detail: { style }
