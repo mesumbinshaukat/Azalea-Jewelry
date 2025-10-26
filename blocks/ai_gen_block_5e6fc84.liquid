@@ -99,6 +99,11 @@
     opacity: 0.5;
   }
 
+  .ai-collection-scroll__item-{{ ai_gen_id }}.active .ai-collection-scroll__image-container-{{ ai_gen_id }} {
+    outline: 2px solid {{ block.settings.title_color }};
+    outline-offset: 2px;
+  }
+
   .ai-collection-scroll__title-{{ ai_gen_id }} {
     font-size: {{ block.settings.title_font_size }}px;
     font-weight: {{ block.settings.title_font_weight }};
@@ -131,17 +136,13 @@
       flex: 0 0 calc((100% - (2 * {{ block.settings.item_spacing }}px)) / 3);
     }
   }
-{% assign styles = '' %}
-{% for product in collection.products %}
-  {% assign style = product.metafields.custom.style %}
-  {% if style and styles contains style == false %}
-    {% assign styles = styles | append: style | append: ',' %}
-  {% endif %}
-{% endfor %}
-{% assign styles_array = styles | split: ',' %}
-  class="ai-collection-scroll-{{ ai_gen_id }}"
-  {{ block.shopify_attributes }}
->
+
+  {% endstyle %}
+
+  
+{% assign entries = shop.metaobjects.custom.values %}
+
+<collection-scroll-{{ ai_gen_id }} class="ai-collection-scroll-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
   <div class="ai-collection-scroll__container-{{ ai_gen_id }}"><button
       class="ai-collection-scroll__arrow-{{ ai_gen_id }} ai-collection-scroll__arrow--left-{{ ai_gen_id }}"
       aria-label="Scroll left"
@@ -154,74 +155,44 @@
 
     <div class="ai-collection-scroll__viewport-{{ ai_gen_id }}">
       <div class="ai-collection-scroll__track-{{ ai_gen_id }}">
-        {% for i in (1..9) %}
-          {% liquid
-            assign image_key = 'image_' | append: i
-            assign title_key = 'title_' | append: i
-            assign link_key = 'link_' | append: i
-            assign image = block.settings[image_key]
-            assign title = block.settings[title_key]
-            assign link = block.settings[link_key]
-          %}
+        {% if entries.size > 0 %}
+          {% for entry in entries %}
+            {% assign style = entry.style.value | default: '' %}
+            {% assign image = entry.image.value %}
+            {% assign encoded_style = style | url_encode %}
+            {% assign link = '?filter.p.m.custom.style=' | append: encoded_style %}
 
-          {% if link != blank %}
             <a
               href="{{ link }}"
               class="ai-collection-scroll__item-{{ ai_gen_id }}"
+              data-style="{{ style | escape }}"
             >
               <div class="ai-collection-scroll__image-container-{{ ai_gen_id }}">
                 {% if image %}
                   <img
-                    src="{{ image | image_url: width: 300 }}"
-                    alt="{{ image.alt | escape }}"
-                    class="ai-collection-scroll__image-{{ ai_gen_id }}"loading="lazy"
-                    width="300"
-                    height="300"
-                  >
-                {% else %}
-                  <div class="ai-collection-scroll__placeholder-{{ ai_gen_id }}">
-                    {{ 'collection-apparel-1' | placeholder_svg_tag }}
-                  </div>
-                {% endif %}
-              </div>
-              <h3 class="ai-collection-scroll__title-{{ ai_gen_id }}">
-                {% if title != blank %}
-                  {{ title }}
-                {% else %}
-                  Category {{ i }}
-                {% endif %}
-              </h3>
-            </a>
-          {% else %}
-            <div class="ai-collection-scroll__item-{{ ai_gen_id }}">
-              <div class="ai-collection-scroll__image-container-{{ ai_gen_id }}">
-                {% if image %}
-                  <img
-                    src="{{ image | image_url: width: 300 }}"
-                    alt="{{ image.alt | escape }}"
+                    src="{{ image | image_url: width: 200 }}"
+                    alt="{{ style | default: 'Shop style' | escape }}"
                     class="ai-collection-scroll__image-{{ ai_gen_id }}"
                     loading="lazy"
-                    width="300"
-                    height="300"
+                    width="200"
+                    height="200"
                   >
                 {% else %}
                   <div class="ai-collection-scroll__placeholder-{{ ai_gen_id }}">
-                    {{ 'collection-apparel-1' | placeholder_svg_tag }}<div class="ai-collection-scroll__empty-state-{{ ai_gen_id }}">
-                      Add image and link {{ i }}
-                    </div>
+                    <p>{{ style | default: 'Style' }}</p>
                   </div>
                 {% endif %}
               </div>
               <h3 class="ai-collection-scroll__title-{{ ai_gen_id }}">
-                {% if title != blank %}
-                  {{ title }}
-                {% else %}
-                  Category {{ i }}
-                {% endif %}
+                {{ style | default: 'Shop style' }}
               </h3>
-            </div>
-          {% endif %}
-        {% endfor %}
+            </a>
+          {% endfor %}
+        {% else %}
+          <div class="ai-collection-scroll__empty-state-{{ ai_gen_id }}">
+            <p>No styles available.</p>
+          </div>
+        {% endif %}
       </div>
     </div>
 
@@ -236,274 +207,154 @@
   </div>
 </collection-scroll-{{ ai_gen_id }}>
 
-<script>
-  (function() {
-    class CollectionScroll{{ ai_gen_id }} extends HTMLElement {
-      constructor() {
-        super();
-        this.currentIndex = 0;
-        this.itemsVisible = 8;
-        this.totalItems = 9;
-        this.maxIndex = this.totalItems - this.itemsVisible;
-      }
-
-      connectedCallback() {
-        this.track = this.querySelector('.ai-collection-scroll__track-{{ ai_gen_id }}');
-        this.leftArrow = this.querySelector('.ai-collection-scroll__arrow--left-{{ ai_gen_id }}');
-        this.rightArrow = this.querySelector('.ai-collection-scroll__arrow--right-{{ ai_gen_id }}');
-        this.viewport = this.querySelector('.ai-collection-scroll__viewport-{{ ai_gen_id }}');
-
-        this.setupEventListeners();
-        this.updateArrowStates();
-        this.updateItemsVisible();
-      }
-
-      setupEventListeners() {
-        this.leftArrow.addEventListener('click', () => this.scrollLeft());
-        this.rightArrow.addEventListener('click', () => this.scrollRight());
-
-        this.viewport.addEventListener('wheel', (e) => {
-          e.preventDefault();
-          if (e.deltaX > 0 || e.deltaY > 0) {
-            this.scrollRight();
-          } else {
-            this.scrollLeft();
-          }
-        });
-
-        window.addEventListener('resize', () => this.updateItemsVisible());
-      }
-
-      updateItemsVisible() {
-        const viewportWidth = window.innerWidth;
-        if (viewportWidth <= 479) {
-          this.itemsVisible = 3;
-        } else if (viewportWidth <= 749) {
-          this.itemsVisible = 4;
-        } else {
+  <script>
+    (function() {
+      class CollectionScroll{{ ai_gen_id }} extends HTMLElement {
+        constructor() {
+          super();
+          this.currentIndex = 0;
           this.itemsVisible = 8;
+          this.totalItems = {{ entries.size }};
+          this.maxIndex = this.totalItems - this.itemsVisible;
+          this.currentStyle = '';
+          this.handlePopState = this.handlePopState.bind(this);
         }
-        this.maxIndex = Math.max(0, this.totalItems - this.itemsVisible);
-        this.currentIndex = Math.min(this.currentIndex, this.maxIndex);this.updateTransform();
-        this.updateArrowStates();
-      }
 
-      scrollLeft() {
-        if (this.currentIndex > 0) {
-          this.currentIndex--;
+        connectedCallback() {
+          this.track = this.querySelector('.ai-collection-scroll__track-{{ ai_gen_id }}');
+          this.leftArrow = this.querySelector('.ai-collection-scroll__arrow--left-{{ ai_gen_id }}');
+          this.rightArrow = this.querySelector('.ai-collection-scroll__arrow--right-{{ ai_gen_id }}');
+          this.viewport = this.querySelector('.ai-collection-scroll__viewport-{{ ai_gen_id }}');
+          this.styleItems = Array.from(this.querySelectorAll('.ai-collection-scroll__item-{{ ai_gen_id }}'));
+
+          this.setupEventListeners();
+          this.updateArrowStates();
+          this.updateItemsVisible();
+          this.applyStyleFromUrl();
+          window.addEventListener('popstate', this.handlePopState);
+        }
+
+        disconnectedCallback() {
+          window.removeEventListener('popstate', this.handlePopState);
+        }
+
+        setupEventListeners() {
+          this.leftArrow.addEventListener('click', () => this.scrollLeft());
+          this.rightArrow.addEventListener('click', () => this.scrollRight());
+
+          this.viewport.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            if (e.deltaX > 0 || e.deltaY > 0) {
+              this.scrollRight();
+            } else {
+              this.scrollLeft();
+            }
+          });
+
+          window.addEventListener('resize', () => this.updateItemsVisible());
+
+          this.styleItems.forEach((item) => {
+            item.addEventListener('click', (event) => {
+              event.preventDefault();
+              const itemStyle = item.dataset.style || '';
+              const nextStyle = this.currentStyle === itemStyle ? '' : itemStyle;
+              this.selectStyle(nextStyle, { updateHistory: true });
+            });
+          });
+        }
+
+        updateItemsVisible() {
+          const viewportWidth = window.innerWidth;
+          if (viewportWidth <= 479) {
+            this.itemsVisible = 3;
+          } else if (viewportWidth <= 749) {
+            this.itemsVisible = 4;
+          } else {
+            this.itemsVisible = 8;
+          }
+          this.maxIndex = Math.max(0, this.totalItems - this.itemsVisible);
+          this.currentIndex = Math.min(this.currentIndex, this.maxIndex);
           this.updateTransform();
           this.updateArrowStates();
         }
-      }
 
-      scrollRight() {
-        if (this.currentIndex < this.maxIndex) {
-          this.currentIndex++;
-          this.updateTransform();
-          this.updateArrowStates();
+        scrollLeft() {
+          if (this.currentIndex > 0) {
+            this.currentIndex--;
+            this.updateTransform();
+            this.updateArrowStates();
+          }
+        }
+
+        scrollRight() {
+          if (this.currentIndex < this.maxIndex) {
+            this.currentIndex++;
+            this.updateTransform();
+            this.updateArrowStates();
+          }
+        }
+
+        updateTransform() {
+          const itemWidth = 100 / this.itemsVisible;
+          const translateX = -(this.currentIndex * itemWidth);
+          this.track.style.transform = `translateX(${translateX}%)`;
+        }
+
+        updateArrowStates() {
+          this.leftArrow.disabled = this.currentIndex === 0;
+          this.rightArrow.disabled = this.currentIndex >= this.maxIndex;
+        }
+
+        selectStyle(style, { updateHistory = true } = {}) {
+          this.currentStyle = style;
+          const normalized = (style || '').toLowerCase();
+
+          if (this.styleItems) {
+            this.styleItems.forEach((item) => {
+              const itemStyle = (item.dataset.style || '').toLowerCase();
+              const isActive = normalized !== '' && itemStyle === normalized;
+              item.classList.toggle('active', isActive);
+            });
+          }
+
+          if (updateHistory) {
+            const url = new URL(window.location.href);
+            if (style) {
+              url.searchParams.set('filter.p.m.custom.style', style);
+            } else {
+              url.searchParams.delete('filter.p.m.custom.style');
+            }
+            window.history.pushState({}, '', url.toString());
+          }
+
+          console.log('CollectionScroll{{ ai_gen_id }} selecting style:', style || '(all styles)');
+
+          window.dispatchEvent(
+            new CustomEvent('style:filter', {
+              detail: { style }
+            })
+          );
+        }
+
+        applyStyleFromUrl() {
+          const url = new URL(window.location.href);
+          const styleFromUrl = url.searchParams.get('filter.p.m.custom.style') || '';
+          this.selectStyle(styleFromUrl, { updateHistory: false });
+        }
+
+        handlePopState() {
+          this.applyStyleFromUrl();
         }
       }
 
-      updateTransform() {
-        const itemWidth = 100 / this.itemsVisible;
-        const translateX = -(this.currentIndex * itemWidth);
-        this.track.style.transform = `translateX(${translateX}%)`;
-      }
-
-      updateArrowStates() {
-        this.leftArrow.disabled = this.currentIndex === 0;
-        this.rightArrow.disabled = this.currentIndex >= this.maxIndex;
-      }
-    }
-
-    customElements.define('collection-scroll-{{ ai_gen_id }}', CollectionScroll{{ ai_gen_id }});
-  })();
-</script>
+      customElements.define('collection-scroll-{{ ai_gen_id }}', CollectionScroll{{ ai_gen_id }});
+    })();
+  </script>
 
 {% schema %}
 {
-  "name": "Category scroll",
+  "name": "Shop by Style Scroll",
   "settings": [
-    {
-      "type": "header",
-      "content": "Category1"
-    },
-    {
-      "type": "image_picker",
-      "id": "image_1",
-      "label": "Image"
-    },
-    {
-      "type": "text",
-      "id": "title_1",
-      "label": "Title",
-      "default": "Category 1"
-    },
-    {
-      "type": "url",
-      "id": "link_1",
-      "label": "Link"
-    },
-    {
-      "type": "header",
-      "content": "Category 2"
-    },
-    {
-      "type": "image_picker",
-      "id": "image_2",
-      "label": "Image"
-    },
-    {
-      "type": "text",
-      "id": "title_2",
-      "label": "Title",
-      "default": "Category 2"
-    },
-    {
-      "type": "url",
-      "id": "link_2",
-      "label": "Link"
-    },
-    {
-      "type": "header",
-      "content": "Category 3"
-    },
-    {
-      "type": "image_picker",
-      "id": "image_3",
-      "label": "Image"
-    },
-    {
-      "type": "text",
-      "id": "title_3",
-      "label": "Title",
-      "default": "Category 3"
-    },
-    {
-      "type": "url",
-      "id": "link_3",
-      "label": "Link"
-    },
-    {
-      "type": "header",
-      "content": "Category 4"
-    },
-    {
-      "type": "image_picker",
-      "id": "image_4",
-      "label": "Image"
-    },
-    {
-      "type": "text",
-      "id": "title_4",
-      "label": "Title",
-      "default": "Category 4"
-    },
-    {
-      "type": "url",
-      "id": "link_4",
-      "label": "Link"
-    },
-    {
-      "type": "header",
-      "content": "Category 5"
-    },
-    {
-      "type": "image_picker",
-      "id": "image_5",
-      "label": "Image"
-    },
-    {
-      "type": "text",
-      "id": "title_5",
-      "label": "Title",
-      "default": "Category 5"
-    },
-    {
-      "type": "url",
-      "id": "link_5",
-      "label": "Link"
-    },
-    {
-      "type": "header",
-      "content": "Category 6"
-    },
-    {
-      "type": "image_picker",
-      "id": "image_6",
-      "label": "Image"
-    },
-    {
-      "type": "text",
-      "id": "title_6",
-      "label": "Title",
-      "default": "Category 6"
-    },
-    {
-      "type": "url",
-      "id": "link_6",
-      "label": "Link"
-    },
-    {
-      "type": "header",
-      "content": "Category 7"
-    },
-    {
-      "type": "image_picker",
-      "id": "image_7",
-      "label": "Image"
-    },
-    {
-      "type": "text",
-      "id": "title_7",
-      "label": "Title",
-      "default": "Category 7"
-    },
-    {
-      "type": "url",
-      "id": "link_7",
-      "label": "Link"
-    },
-    {
-      "type": "header",
-      "content": "Category 8"
-    },
-    {
-      "type": "image_picker",
-      "id": "image_8",
-      "label": "Image"
-    },
-    {
-      "type": "text",
-      "id": "title_8",
-      "label": "Title",
-      "default": "Category 8"
-    },
-    {
-      "type": "url",
-      "id": "link_8",
-      "label": "Link"
-    },
-    {
-      "type": "header",
-      "content": "Category 9"
-    },
-    {
-      "type": "image_picker",
-      "id": "image_9",
-      "label": "Image"
-    },
-    {
-      "type": "text",
-      "id": "title_9",
-      "label": "Title",
-      "default": "Category 9"
-    },
-    {
-      "type": "url",
-      "id": "link_9",
-      "label": "Link"
-    },
     {
       "type": "header",
       "content": "Layout"
@@ -597,7 +448,7 @@
   ],
   "presets": [
     {
-      "name": "Category scroll"
+      "name": "Shop by Style Scroll"
     }
   ]
 }

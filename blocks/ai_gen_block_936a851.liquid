@@ -281,102 +281,96 @@
   {{ block.shopify_attributes }}
 >
   <div class="ai-product-showcase-container-{{ ai_gen_id }}">
-    {% assign has_products = false %}
-    {% for i in (1..60) %}
-      {% liquid
-        assign product_key = 'product_' | append: i
-        assign product = block.settings[product_key]
-        if product != blank
-          assign has_products = true
-          break
-        endif
-      %}
-    {% endfor %}
+    {% if collection.products_count > 0 %}
+      <div class="ai-product-showcase-grid-{{ ai_gen_id }}" data-showcase-grid>
+        {% for product in collection.products %}
+          {% assign product_style = '' %}
+          {% assign product_custom_meta = product.metafields.custom.custom %}
+          {% if product_custom_meta != blank and product_custom_meta.value != blank %}
+            {% assign product_style_reference = product_custom_meta.value.style %}
+            {% if product_style_reference != blank and product_style_reference.value != blank %}
+              {% assign product_style = product_style_reference.value %}
+            {% endif %}
+          {% endif %}
 
-    {% if has_products %}
-      <div class="ai-product-showcase-grid-{{ ai_gen_id }}">
-        {% for i in (1..60) %}
-          {% liquid
-            assign product_key = 'product_' | append: i
-            assign product = block.settings[product_key]
-          %}
+          <div
+            class="ai-product-showcase-card-{{ ai_gen_id }}"
+            data-product-id="{{ product.id }}"
+            data-product-url="{{ product.url }}"
+            data-style="{{ product_style | escape }}"
+          >
+            <div class="ai-product-showcase-image-container-{{ ai_gen_id }}">
+              {% if product.featured_image %}
+                <img
+                  src="{{ product.featured_image | image_url: width: 300 }}"
+                  alt="{{ product.title | escape }}"
+                  class="ai-product-showcase-image-{{ ai_gen_id }}"
+                  loading="lazy"
+                  width="300"
+                  height="300"
+                  data-main-image
+                >
+              {% else %}
+                <div class="ai-product-showcase-placeholder-{{ ai_gen_id }}">
+                  {{ 'product-1' | placeholder_svg_tag }}
+                </div>
+              {% endif %}
+            </div>
 
-          {% if product != blank %}
-            <div
-              class="ai-product-showcase-card-{{ ai_gen_id }}"
-              data-product-id="{{ product.id }}"
-              data-product-url="{{ product.url }}"
-            >
-              <div class="ai-product-showcase-image-container-{{ ai_gen_id }}">
-                {% if product.featured_image %}
-                  <img
-                    src="{{ product.featured_image | image_url: width: 400 }}"
-                    alt="{{ product.featured_image.alt | escape }}"
-                    class="ai-product-showcase-image-{{ ai_gen_id }}"
-                    loading="lazy"
-                    width="400"
-                    height="400"
-                    data-main-image
-                  >
-                {% else %}
-                  <div class="ai-product-showcase-placeholder-{{ ai_gen_id }}">
-                    {{ 'product-1' | placeholder_svg_tag }}
-                  </div>
-                {% endif %}
-              </div>
+            {% if product.variants.size > 1 %}
+              <div class="ai-product-showcase-color-swatches-{{ ai_gen_id }}">
+                {% assign variant_count = 0 %}
+                {% for variant in product.variants limit: 4 %}
+                  {% if variant.featured_image %}
+                    {% assign variant_count = variant_count | plus: 1 %}
+                    {% assign swatch_color = variant.option1 | downcase %}
+                    {% assign color_value = '#cccccc' %}
 
-  {% if product.variants.size > 1 %}
-  <div class="ai-product-showcase-color-swatches-{{ ai_gen_id }}">
-    {% assign variant_count = 0 %}
-    {% for variant in product.variants limit: 4 %}
-      {% if variant.featured_image %}
-        {% assign variant_count = variant_count | plus: 1 %}
-        {% assign swatch_color = variant.option1 | downcase %}
-        {% assign color_value = '#cccccc' %}
-        
-          {% if swatch_color contains 'rose gold' %}
-                        {% assign color_value = 'linear-gradient(135deg, #FAD6C3 10%, #EFB7A3 40%, #D9A29C 90%)' %}
-                      {% elsif swatch_color contains 'gold' %}
-                        {% assign color_value = 'linear-gradient(135deg, #F2DBA3 10%, #FAF8F3 50%, #D4AF37 90%)' %}
-                      {% elsif swatch_color contains 'silver' %}
-                        {% assign color_value = 'linear-gradient(135deg, #E0E0E0 10%, #F8F8F8 50%, #C0C0C0 90%)' %}
-                      {% elsif swatch_color contains 'copper' %}
-                        {% assign color_value = 'linear-gradient(135deg, #DDCDBE 15%, #FAF8F7 45%, #DFCEC8 85%)' %}
-                      {% endif %}
+                    {% if swatch_color contains 'rose gold' %}
+                      {% assign color_value = 'linear-gradient(135deg, #FAD6C3 10%, #EFB7A3 40%, #D9A29C 90%)' %}
+                    {% elsif swatch_color contains 'gold' %}
+                      {% assign color_value = 'linear-gradient(135deg, #F2DBA3 10%, #FAF8F3 50%, #D4AF37 90%)' %}
+                    {% elsif swatch_color contains 'silver' %}
+                      {% assign color_value = 'linear-gradient(135deg, #E0E0E0 10%, #F8F8F8 50%, #C0C0C0 90%)' %}
+                    {% elsif swatch_color contains 'copper' %}
+                      {% assign color_value = 'linear-gradient(135deg, #DDCDBE 15%, #FAF8F7 45%, #DFCEC8 85%)' %}
+                    {% endif %}
 
-        <button
-          class="ai-product-showcase-color-swatch-{{ ai_gen_id }} {% if forloop.first %}active{% endif %}"
-          style="background: {{ color_value }};"
-          data-variant-id="{{ variant.id }}"
-          data-variant-image="{{ variant.featured_image | image_url: width: 400 }}"
-          data-variant-title="{{ variant.title | escape }}"
-          data-variant-price="{{ variant.price | money }}"
-          aria-label="Select {{ variant.title }}"
-        ></button>
-      {% endif %}
-    {% endfor %}
-  </div>
-{% endif %}
-
-
-                      <h3 class="ai-product-showcase-title-{{ ai_gen_id }}" data-product-title>
-                        {{ product.title }}
-                      </h3>
-
-                      <p class="ai-product-showcase-price-{{ ai_gen_id }}" data-product-price>
-                        {{ product.price | money }}
-                      </p>
-                    </div>
+                    <button
+                      class="ai-product-showcase-color-swatch-{{ ai_gen_id }}"
+                      style="background: {{ color_value }}"
+                      data-variant-image="{{ variant.featured_image | image_url: width: 400 }}"
+                      data-variant-title="{{ variant.title | escape }}"
+                      data-variant-price="{{ variant.price | money }}"
+                      type="button"
+                    ></button>
                   {% endif %}
                 {% endfor %}
               </div>
-            {% else %}
-              <div class="ai-product-showcase-empty-state-{{ ai_gen_id }}">
-                <h3>Product Showcase</h3>
-                <p>Add products to start building your showcase</p>
-              </div>
             {% endif %}
+
+            <h3 class="ai-product-showcase-title-{{ ai_gen_id }}" data-product-title>
+              {{ product.title }}
+            </h3>
+
+            <p class="ai-product-showcase-price-{{ ai_gen_id }}" data-product-price>
+              {{ product.price | money }}
+            </p>
           </div>
+        {% endfor %}
+      </div>
+
+      <div class="ai-product-showcase-empty-state-{{ ai_gen_id }}" data-empty-state hidden>
+        <h3>No products found</h3>
+        <p>No products found for this style.</p>
+      </div>
+    {% else %}
+      <div class="ai-product-showcase-empty-state-{{ ai_gen_id }}">
+        <h3>No products found</h3>
+        <p>No products found for this style.</p>
+      </div>
+    {% endif %}
+  </div>
 </product-showcase-{{ ai_gen_id }}>
 
 <script>
@@ -384,16 +378,31 @@
     class ProductShowcase{{ ai_gen_id }} extends HTMLElement {
       constructor() {
         super();
+        this.handleStyleFilter = this.handleStyleFilter.bind(this);
+        this.handlePopState = this.handlePopState.bind(this);
       }
 
       connectedCallback() {
+        this.grid = this.querySelector('[data-showcase-grid]');
+        this.cards = Array.from(this.querySelectorAll('.ai-product-showcase-card-{{ ai_gen_id }}'));
+        this.emptyState = this.querySelector('[data-empty-state]');
+
+        this.logAvailableStyles();
+
         this.setupEventListeners();
+        this.applyStyleFromUrl();
+
+        window.addEventListener('style:filter', this.handleStyleFilter);
+        window.addEventListener('popstate', this.handlePopState);
+      }
+
+      disconnectedCallback() {
+        window.removeEventListener('style:filter', this.handleStyleFilter);
+        window.removeEventListener('popstate', this.handlePopState);
       }
 
       setupEventListeners() {
-        const cards = this.querySelectorAll('.ai-product-showcase-card-{{ ai_gen_id }}');
-        
-        cards.forEach(card => {
+        this.cards.forEach(card => {
           const swatches = card.querySelectorAll('.ai-product-showcase-color-swatch-{{ ai_gen_id }}');
           const mainImage = card.querySelector('[data-main-image]');
           const titleElement = card.querySelector('[data-product-title]');
@@ -432,6 +441,90 @@
             }
           });
         });
+      }
+
+      handleStyleFilter(event) {
+        const style = event.detail && event.detail.style ? event.detail.style : '';
+        this.applyStyleFilter(style);
+      }
+
+      applyStyleFromUrl() {
+        const url = new URL(window.location.href);
+        const selectedStyle = url.searchParams.get('filter.p.m.custom.style') || '';
+        this.applyStyleFilter(selectedStyle);
+      }
+
+      handlePopState() {
+        this.applyStyleFromUrl();
+      }
+
+      applyStyleFilter(style) {
+        if (!this.cards || this.cards.length === 0) {
+          return;
+        }
+
+        const normalized = (style || '').toLowerCase();
+        let visibleCount = 0;
+
+        console.log('ProductShowcase{{ ai_gen_id }} applying filter for style:', style || '(all styles)');
+
+        this.cards.forEach((card) => {
+          const cardStyle = (card.dataset.style || '').toLowerCase();
+          const cardTitleElement = card.querySelector('[data-product-title]');
+          const cardTitle = cardTitleElement ? cardTitleElement.textContent.trim() : '(untitled)';
+          const shouldShow = normalized === '' || cardStyle === normalized;
+
+          card.style.display = shouldShow ? '' : 'none';
+          card.classList.toggle('is-filtered-out', !shouldShow);
+
+          if (shouldShow) {
+            visibleCount += 1;
+          }
+
+          console.log('ProductShowcase{{ ai_gen_id }} card evaluation:', {
+            title: cardTitle,
+            style: card.dataset.style || '(none)',
+            matches: shouldShow
+          });
+        });
+
+        if (this.emptyState) {
+          if (visibleCount === 0) {
+            this.emptyState.hidden = false;
+          } else {
+            this.emptyState.hidden = true;
+          }
+        }
+
+        if (this.grid) {
+          this.grid.dataset.visibleCount = visibleCount;
+        }
+      }
+
+      logAvailableStyles() {
+        if (!this.cards || this.cards.length === 0) {
+          console.log('ProductShowcase{{ ai_gen_id }} found no product cards to analyze.');
+          return;
+        }
+
+        const styleSet = new Set();
+        const styleMap = {};
+
+        this.cards.forEach((card) => {
+          const rawStyle = (card.dataset.style || '').trim();
+          const styleKey = rawStyle !== '' ? rawStyle : '(none)';
+          const titleElement = card.querySelector('[data-product-title]');
+          const title = titleElement ? titleElement.textContent.trim() : '(untitled)';
+
+          styleSet.add(styleKey);
+          if (!styleMap[styleKey]) {
+            styleMap[styleKey] = [];
+          }
+          styleMap[styleKey].push(title);
+        });
+
+        console.log('ProductShowcase{{ ai_gen_id }} available styles:', Array.from(styleSet));
+        console.log('ProductShowcase{{ ai_gen_id }} style to titles map:', styleMap);
       }
     }
   
@@ -472,310 +565,6 @@
       "id": "accent_color",
       "label": "Accent color",
       "default": "#007bff"
-    },
-    {
-      "type": "header",
-      "content": "Products"
-    },
-    {
-      "type": "product",
-      "id": "product_1",
-      "label": "Product 1"
-    },
-    {
-      "type": "product",
-      "id": "product_2",
-      "label": "Product 2"
-    },
-    {
-      "type": "product",
-      "id": "product_3",
-      "label": "Product 3"
-    },
-    {
-      "type": "product",
-      "id": "product_4",
-      "label": "Product 4"
-    },
-    {
-      "type": "product",
-      "id": "product_5",
-      "label": "Product 5"
-    },
-    {
-      "type": "product",
-      "id": "product_6",
-      "label": "Product 6"
-    },
-    {
-      "type": "product",
-      "id": "product_7",
-      "label": "Product 7"
-    },
-    {
-      "type": "product",
-      "id": "product_8",
-      "label": "Product 8"
-    },
-    {
-      "type": "product",
-      "id": "product_9",
-      "label": "Product 9"
-    },
-    {
-      "type": "product",
-      "id": "product_10",
-      "label": "Product 10"
-    },
-    {
-      "type": "product",
-      "id": "product_11",
-      "label": "Product 11"
-    },
-    {
-      "type": "product",
-      "id": "product_12",
-      "label": "Product 12"
-    },
-    {
-      "type": "product",
-      "id": "product_13",
-      "label": "Product 13"
-    },
-    {
-      "type": "product",
-      "id": "product_14",
-      "label": "Product 14"
-    },
-    {
-      "type": "product",
-      "id": "product_15",
-      "label": "Product 15"
-    },
-    {
-      "type": "product",
-      "id": "product_16",
-      "label": "Product 16"
-    },
-    {
-      "type": "product",
-      "id": "product_17",
-      "label": "Product 17"
-    },
-    {
-      "type": "product",
-      "id": "product_18",
-      "label": "Product 18"
-    },
-    {
-      "type": "product",
-      "id": "product_19",
-      "label": "Product 19"
-    },
-    {
-      "type": "product",
-      "id": "product_20",
-      "label": "Product 20"
-    },
-    {
-      "type": "product",
-      "id": "product_21",
-      "label": "Product 21"
-    },
-    {
-      "type": "product",
-      "id": "product_22",
-      "label": "Product 22"
-    },
-    {
-      "type": "product",
-      "id": "product_23",
-      "label": "Product 23"
-    },
-    {
-      "type": "product",
-      "id": "product_24",
-      "label": "Product 24"
-    },
-    {
-      "type": "product",
-      "id": "product_25",
-      "label": "Product 25"
-    },
-    {
-      "type": "product",
-      "id": "product_26",
-      "label": "Product 26"
-    },
-    {
-      "type": "product",
-      "id": "product_27",
-      "label": "Product 27"
-    },
-    {
-      "type": "product",
-      "id": "product_28",
-      "label": "Product 28"
-    },
-    {
-      "type": "product",
-      "id": "product_29",
-      "label": "Product 29"
-    },
-    {
-      "type": "product",
-      "id": "product_30",
-      "label": "Product 30"
-    },
-    {
-      "type": "product",
-      "id": "product_31",
-      "label": "Product 31"
-    },
-    {
-      "type": "product",
-      "id": "product_32",
-      "label": "Product 32"
-    },
-    {
-      "type": "product",
-      "id": "product_33",
-      "label": "Product 33"
-    },
-    {
-      "type": "product",
-      "id": "product_34",
-      "label": "Product 34"
-    },
-    {
-      "type": "product",
-      "id": "product_35",
-      "label": "Product 35"
-    },
-    {
-      "type": "product",
-      "id": "product_36",
-      "label": "Product 36"
-    },
-    {
-      "type": "product",
-      "id": "product_37",
-      "label": "Product 37"
-    },
-    {
-      "type": "product",
-      "id": "product_38",
-      "label": "Product 38"
-    },
-    {
-      "type": "product",
-      "id": "product_39",
-      "label": "Product 39"
-    },
-    {
-      "type": "product",
-      "id": "product_40",
-      "label": "Product 40"
-    },
-    {
-      "type": "product",
-      "id": "product_41",
-      "label": "Product 41"
-    },
-    {
-      "type": "product",
-      "id": "product_42",
-      "label": "Product 42"
-    },
-    {
-      "type": "product",
-      "id": "product_43",
-      "label": "Product 43"
-    },
-    {
-      "type": "product",
-      "id": "product_44",
-      "label": "Product 44"
-    },
-    {
-      "type": "product",
-      "id": "product_45",
-      "label": "Product 45"
-    },
-    {
-      "type": "product",
-      "id": "product_46",
-      "label": "Product 46"
-    },
-    {
-      "type": "product",
-      "id": "product_47",
-      "label": "Product 47"
-    },
-    {
-      "type": "product",
-      "id": "product_48",
-      "label": "Product 48"
-    },
-    {
-      "type": "product",
-      "id": "product_49",
-      "label": "Product 49"
-    },
-    {
-      "type": "product",
-      "id": "product_50",
-      "label": "Product 50"
-    },
-    {
-      "type": "product",
-      "id": "product_51",
-      "label": "Product 51"
-    },
-    {
-      "type": "product",
-      "id": "product_52",
-      "label": "Product 52"
-    },
-    {
-      "type": "product",
-      "id": "product_53",
-      "label": "Product 53"
-    },
-    {
-      "type": "product",
-      "id": "product_54",
-      "label": "Product 54"
-    },
-    {
-      "type": "product",
-      "id": "product_55",
-      "label": "Product 55"
-    },
-    {
-      "type": "product",
-      "id": "product_56",
-      "label": "Product 56"
-    },
-    {
-      "type": "product",
-      "id": "product_57",
-      "label": "Product 57"
-    },
-    {
-      "type": "product",
-      "id": "product_58",
-      "label": "Product 58"
-    },
-    {
-      "type": "product",
-      "id": "product_59",
-      "label": "Product 59"
-    },
-    {
-      "type": "product",
-      "id": "product_60",
-      "label": "Product 60"
     }
   ],
   "presets": [
