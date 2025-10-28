@@ -1,0 +1,181 @@
+{% comment %}
+  Renders a megamenu for the header.
+
+  Usage:
+  {% render 'header-mega-menu' %}
+{% endcomment %}
+
+{% liquid
+  assign navigation_menu = linklists[section.settings.menu]
+  if navigation_menu == blank
+    assign navigation_links = section.settings.menu.links
+  else
+    assign navigation_links = navigation_menu.links
+  endif
+
+  assign menu_icon_blocks = section.blocks | where: 'type', 'menu_icons'
+  assign menu_icon_titles = ''
+
+  for icon_block in menu_icon_blocks
+    if icon_block.settings.title != blank
+      assign normalized_title = icon_block.settings.title | strip
+      if menu_icon_titles == ''
+        assign menu_icon_titles = normalized_title
+      else
+        assign menu_icon_titles = menu_icon_titles | append: ', ' | append: normalized_title
+      endif
+    endif
+  endfor
+%}
+
+<script>
+  console.log(
+    'Menu icon mapping blocks count:', {{ menu_icon_blocks | size }},
+    'Titles:', '{{ menu_icon_titles }}'
+  );
+</script>
+
+<nav class="header__inline-menu">
+  <ul class="list-menu list-menu--inline" role="list">
+    {%- for link in navigation_links -%}
+      <script>
+        console.log(
+          'Top-level link:', '{{ link.title }}',
+          'Child links:', {{ link.links | map: 'title' | json }},
+          'Menu icon candidates:', '{{ menu_icon_titles }}'
+        );
+      </script>
+      <li>
+        {%- if link.links != blank -%}
+          <header-menu>
+            <details id="Details-HeaderMenu-{{ forloop.index }}" class="mega-menu">
+              <summary
+                id="HeaderMenu-{{ link.handle }}"
+                class="header__menu-item list-menu__item link focus-inset"
+              >
+                <span
+                  {%- if link.child_active %}
+                    class="header__active-menu-item"
+                  {% endif %}
+                >
+                  {{- link.title | escape -}}
+                </span>
+                {{- 'icon-caret.svg' | inline_asset_content -}}
+              </summary>
+              <div
+                id="MegaMenu-Content-{{ forloop.index }}"
+                class="mega-menu__content color-{{ section.settings.menu_color_scheme }} gradient motion-reduce global-settings-popup"
+                tabindex="-1"
+              >
+                <ul
+                  class="mega-menu__list page-width{% if link.levels == 1 %} mega-menu__list--condensed{% endif %}"
+                  role="list"
+                >
+                  {%- for childlink in link.links -%}
+                    {%- liquid
+                      assign child_icon = blank
+                      assign child_title = childlink.title | strip | downcase
+
+                      for icon_block in menu_icon_blocks
+                        if icon_block.settings.title != blank and icon_block.settings.icon != blank
+                          assign mapping_title = icon_block.settings.title | strip | downcase
+                          if mapping_title == child_title
+                            assign child_icon = icon_block.settings.icon
+                            break
+                          endif
+                        endif
+                      endfor
+                    -%}
+                    {% assign child_matched = false %}
+                    {% if child_icon != blank %}
+                      {% assign child_matched = true %}
+                    {% endif %}
+                    <script>
+                      console.log(
+                        'Attempting icon match for child link:', '{{ childlink.title | strip }}',
+                        'Matched:', {{ child_matched | json }}
+                      );
+                    </script>
+                    <li>
+                      <a
+                        id="HeaderMenu-{{ link.handle }}-{{ childlink.handle }}"
+                        href="{{ childlink.url }}"
+                        class="mega-menu__link mega-menu__link--level-2 link{% if childlink.current %} mega-menu__link--active{% endif %}"
+                        {% if childlink.current %}
+                          aria-current="page"
+                        {% endif %}
+                      >
+                        {%- render 'menu-icon', icon: child_icon, title: childlink.title -%}
+                        {{ childlink.title | escape }}
+                      </a>
+                      {%- if childlink.links != blank -%}
+                        <ul class="list-unstyled" role="list">
+                          {%- for grandchildlink in childlink.links -%}
+                            {%- liquid
+                              assign grandchild_icon = blank
+                              assign grandchild_title = grandchildlink.title | strip | downcase
+
+                              for icon_block in menu_icon_blocks
+                                if icon_block.settings.title != blank and icon_block.settings.icon != blank
+                                  assign mapping_title = icon_block.settings.title | strip | downcase
+                                  if mapping_title == grandchild_title
+                                    assign grandchild_icon = icon_block.settings.icon
+                                    break
+                                  endif
+                                endif
+                              endfor
+                            -%}
+                            {% assign grandchild_matched = false %}
+                            {% if grandchild_icon != blank %}
+                              {% assign grandchild_matched = true %}
+                            {% endif %}
+                            <script>
+                              console.log(
+                                'Attempting icon match for grandchild link:', '{{ grandchildlink.title | strip }}',
+                                'Matched:', {{ grandchild_matched | json }}
+                              );
+                            </script>
+                            <li>
+                              <a
+                                id="HeaderMenu-{{ link.handle }}-{{ childlink.handle }}-{{ grandchildlink.handle }}"
+                                href="{{ grandchildlink.url }}"
+                                class="mega-menu__link link{% if grandchildlink.current %} mega-menu__link--active{% endif %}"
+                                {% if grandchildlink.current %}
+                                  aria-current="page"
+                                {% endif %}
+                              >
+                                {%- render 'menu-icon', icon: grandchild_icon, title: grandchildlink.title -%}
+                                {{ grandchildlink.title | escape }}
+                              </a>
+                            </li>
+                          {%- endfor -%}
+                        </ul>
+                      {%- endif -%}
+                    </li>
+                  {%- endfor -%}
+                </ul>
+              </div>
+            </details>
+          </header-menu>
+        {%- else -%}
+          <a
+            id="HeaderMenu-{{ link.handle }}"
+            href="{{ link.url }}"
+            class="header__menu-item list-menu__item link link--text focus-inset"
+            {% if link.current %}
+              aria-current="page"
+            {% endif %}
+          >
+            <span
+              {%- if link.current %}
+                class="header__active-menu-item"
+              {% endif %}
+            >
+              {{- link.title | escape -}}
+            </span>
+          </a>
+        {%- endif -%}
+      </li>
+    {%- endfor -%}
+  </ul>
+</nav>

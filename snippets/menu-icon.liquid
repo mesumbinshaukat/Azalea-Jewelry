@@ -1,0 +1,14 @@
+{%- if icon != blank -%}
+  <script>console.log('Rendering icon for:', '{{ title }}', 'Icon URL:', '{{ icon | image_url: width: 24 }}')</script>
+  {%- assign alt_text = title | default: icon.alt | default: blank -%}
+  {{
+    icon
+    | image_url: width: 24
+    | image_tag:
+        class: 'menu-icon',
+        widths: '24',
+        width: 24,
+        height: 24,
+        alt: alt_text
+  }}
+{%- endif -%}

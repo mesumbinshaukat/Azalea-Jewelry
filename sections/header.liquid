@@ -17,6 +17,12 @@
 {%- endif -%}
 
 <style>
+
+/* My Code - Custom Code By Mesum */
+  .header__menu-item span{
+    font-size:1.6rem !important;
+  }
+
   header-drawer {
     justify-self: start;
     margin-left: -1.2rem;
@@ -61,6 +67,14 @@
     line-height: calc(1 + 0.3 / var(--font-body-scale));
   }
 
+  .menu-icon {
+    display: inline-block;
+    width: 1.8rem;
+    height: 1.8rem;
+    margin-right: 0.2rem;
+    vertical-align: middle;
+  }
+
   .list-menu__item--link {
     text-decoration: none;
     padding-bottom: 1rem;
@@ -103,6 +117,8 @@
 <script src="{{ 'cart-notification.js' | asset_url }}" defer="defer"></script>
 
 {%- liquid
+  assign has_app_block = false
+
   for block in section.blocks
     if block.type == '@app'
       assign has_app_block = true
@@ -305,6 +321,8 @@
   </header>
 </{{ header_tag }}>
 
+<script>console.log('Header section.settings:', {{ section.settings | json }})</script>
+
 {%- if settings.cart_type == 'notification' -%}
   {%- render 'cart-notification',
     color_scheme: section.settings.color_scheme,
@@ -470,7 +488,7 @@
 {
   "name": "t:sections.header.name",
   "class": "section-header",
-  "max_blocks": 3,
+  "max_blocks": 20,
   "settings": [
     {
       "type": "select",
@@ -652,6 +670,24 @@
   "blocks": [
     {
       "type": "@app"
+    },
+    {
+      "type": "menu_icons",
+      "name": "Menu icons",
+      "limit": 10,
+      "settings": [
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Menu item title (case-insensitive match)"
+        },
+        {
+          "type": "image_picker",
+          "id": "icon",
+          "label": "Icon",
+          "info": "Upload a high-quality PNG, SVG, JPEG, JPG, or WEBP icon to avoid pixelation."
+        }
+      ]
     }
   ]
 }
