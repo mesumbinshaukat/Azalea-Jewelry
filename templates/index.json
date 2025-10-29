@@ -1,0 +1,562 @@
+/*
+ * ------------------------------------------------------------
+ * IMPORTANT: The contents of this file are auto-generated.
+ *
+ * This file may be updated by the Shopify admin theme editor
+ * or related systems. Please exercise caution as any changes
+ * made to this file may be overwritten.
+ * ------------------------------------------------------------
+ */
+{
+  "sections": {
+    "1758232023db2b64dd": {
+      "type": "_blocks",
+      "settings": {}
+    },
+    "175823183878fbc2d1": {
+      "type": "_blocks",
+      "settings": {}
+    },
+    "1758229983b93d1f32": {
+      "type": "_blocks",
+      "settings": {}
+    },
+    "17572661933d4c6f9f": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_09ed80c_wpF8nr": {
+          "type": "ai_gen_block_09ed80c",
+          "settings": {
+            "left_image": "shopify://shop_images/WhatsApp_Image_2025-09-16_at_03.03.04_cf6be75f.jpg",
+            "left_title": "Easy Shop",
+            "left_description": "",
+            "left_button_text": "Engagement Rings",
+            "left_button_link": "shopify://collections/diamond-collection",
+            "right_image": "shopify://shop_images/WhatsApp_Image_2025-09-16_at_03.05.17_f8a8c3d5.jpg",
+            "right_title": "All Stacked Up",
+            "right_description": "",
+            "right_button_text": "Shop Wedding Rings",
+            "right_button_link": "shopify://collections/wedding-band-wide-bands",
+            "text_color": "#ffffff",
+            "button_color": "#060606",
+            "button_text_color": "#ffffff",
+            "button_hover_color": "#000000",
+            "overlay_opacity": 30,
+            "title_size": 48,
+            "description_size": 16,
+            "button_radius": 0
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_09ed80c_wpF8nr"
+      ],
+      "settings": {}
+    },
+    "175723725210c1f7fc": {
+      "type": "_blocks",
+      "settings": {}
+    },
+    "175723459233c1874a": {
+      "type": "_blocks",
+      "settings": {}
+    },
+    "1757233885d8b74ee8": {
+      "type": "_blocks",
+      "settings": {}
+    },
+    "1757198489e4a57670": {
+      "type": "_blocks",
+      "settings": {}
+    },
+    "1757262468feddf733": {
+      "type": "_blocks",
+      "settings": {}
+    },
+    "1757101700c742228e": {
+      "type": "_blocks",
+      "settings": {}
+    },
+    "175710811135b346c8": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_e3090f9_RcYRW3": {
+          "type": "ai_gen_block_e3090f9",
+          "settings": {
+            "title": "Shop Jewelry by Category",
+            "subtitle": "Thoughtfully designed collections for the big day and every day.",
+            "collection_1": "diamond-collection",
+            "hover_image_1": "shopify://shop_images/WhatsApp_Image_2025-09-16_at_03.33.20_935a9fb3.jpg",
+            "collection_2": "wedding-anniversary-rings",
+            "hover_image_2": "shopify://shop_images/WhatsApp_Image_2025-09-06_at_02.51.50_abf9acd0.jpg",
+            "collection_3": "mosaic",
+            "hover_image_3": "shopify://shop_images/WhatsApp_Image_2025-09-16_at_03.35.02_5e72a7cb.jpg",
+            "collection_4": "all-products",
+            "hover_image_4": "shopify://shop_images/WhatsApp_Image_2025-09-16_at_03.35.57_8fe1199c.jpg",
+            "collection_5": "necklaces",
+            "hover_image_5": "shopify://shop_images/WhatsApp_Image_2025-09-16_at_03.37.33_eacd7f15.jpg",
+            "collection_6": "diamond-rings",
+            "hover_image_6": "shopify://shop_images/WhatsApp_Image_2025-09-16_at_03.38.45_69ac9f07.jpg",
+            "image_border_radius": 0,
+            "title_size": 32,
+            "subtitle_size": 16,
+            "collection_title_size": 16,
+            "title_color": "#000000",
+            "subtitle_color": "#666666",
+            "collection_title_color": "#000000",
+            "collection_title_hover_color": "#666666"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_e3090f9_RcYRW3"
+      ],
+      "settings": {}
+    },
+    "1757158872926c1b17": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_eae85a8_gjQaQz": {
+          "type": "ai_gen_block_eae85a8",
+          "settings": {
+            "title": "Popular Engagement Rings",
+            "description": "Artistry and craftsmanship in every detail.",
+            "title_size": 32,
+            "description_size": 16,
+            "title_color": "#000000",
+            "description_color": "#666666",
+            "collection_1": "all-products",
+            "collection_2": "rings",
+            "collection_3": "mosaic",
+            "collection_4": "boundless",
+            "image_height": 320,
+            "card_border_radius": 0,
+            "text_alignment": "left",
+            "collection_title_size": 18,
+            "collection_description_size": 14,
+            "collection_title_color": "#000000",
+            "collection_description_color": "#666666"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_eae85a8_gjQaQz"
+      ],
+      "settings": {}
+    },
+    "17582333265c93dcf1": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_6b92732_JFieAk": {
+          "type": "ai_gen_block_6b92732",
+          "settings": {
+            "top_margin": 20,
+            "bottom_margin": 20,
+            "vertical_padding": 20,
+            "logo_gap": 30,
+            "background_color": "#ffffff",
+            "logo_width": 120,
+            "logo_height": 60,
+            "logo_opacity": 70,
+            "grayscale": 50,
+            "hover_scale": 105,
+            "animation_speed": 40,
+            "logo_1": "shopify://shop_images/WhatsApp_Image_2025-09-19_at_03.11.14_36196612.jpg",
+            "logo_2": "shopify://shop_images/WhatsApp_Image_2025-09-19_at_03.12.05_93434424.jpg",
+            "logo_3": "shopify://shop_images/WhatsApp_Image_2025-09-19_at_03.12.52_4de9d70e.jpg",
+            "logo_4": "shopify://shop_images/WhatsApp_Image_2025-09-19_at_03.13.22_0fcf7245.jpg",
+            "logo_5": "shopify://shop_images/WhatsApp_Image_2025-09-19_at_03.14.08_87ed9930.jpg",
+            "logo_6": "shopify://shop_images/WhatsApp_Image_2025-09-19_at_03.11.14_36196612.jpg",
+            "logo_7": "shopify://shop_images/WhatsApp_Image_2025-09-19_at_03.12.05_93434424.jpg",
+            "logo_8": "shopify://shop_images/WhatsApp_Image_2025-09-19_at_03.12.52_4de9d70e.jpg"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_6b92732_JFieAk"
+      ],
+      "settings": {}
+    },
+    "175711314554fdb004": {
+      "type": "_blocks",
+      "settings": {}
+    },
+    "1757112332a35042f2": {
+      "type": "_blocks",
+      "settings": {}
+    },
+    "1757110523b8136294": {
+      "type": "_blocks",
+      "settings": {}
+    },
+    "17571143218d680fab": {
+      "type": "_blocks",
+      "settings": {}
+    },
+    "1757147467fcc17f43": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_6dbeca7_m9zXgd": {
+          "type": "ai_gen_block_6dbeca7",
+          "settings": {
+            "main_title": "Shop Diamonds by Shape",
+            "main_image": "shopify://shop_images/WhatsApp_Image_2025-09-06_at_03.53.12_c39bb6d7_1_1.png",
+            "gallery_image_1": "shopify://shop_images/assets_2F9f2a69003c86470ea05deb9ecb9887be_2F365788d569694912b79555fcca7b6be8-fotor-bg-remover-20250902205236.png",
+            "gallery_hover_image_1": "shopify://shop_images/WhatsApp_Image_2025-09-06_at_03.53.12_c39bb6d7_1_1.png",
+            "gallery_title_1": "Oval",
+            "gallery_link_1": "shopify://collections/custom-collection",
+            "gallery_image_2": "shopify://shop_images/assets_2F9f2a69003c86470ea05deb9ecb9887be_2F5eceb83907d944e1a068eafcd691c786-fotor-bg-remover-20250902205412.png",
+            "gallery_hover_image_2": "shopify://shop_images/image_11.png",
+            "gallery_title_2": "Round",
+            "gallery_link_2": "shopify://collections/round",
+            "gallery_image_3": "shopify://shop_images/assets_2F9f2a69003c86470ea05deb9ecb9887be_2Fed7545b61198429891fe8314737ed03d-fotor-bg-remover-20250902205513.png",
+            "gallery_hover_image_3": "shopify://shop_images/image_11_1.png",
+            "gallery_title_3": "Emerald",
+            "gallery_link_3": "shopify://collections/emerald",
+            "gallery_image_4": "shopify://shop_images/assets_2F9f2a69003c86470ea05deb9ecb9887be_2F300ff174910348fa8bb9d14c7281a459-fotor-bg-remover-2025090220579.png",
+            "gallery_hover_image_4": "shopify://shop_images/image_11_2.png",
+            "gallery_title_4": "Marquise",
+            "gallery_link_4": "shopify://collections/marquise",
+            "gallery_image_5": "shopify://shop_images/assets_2F9f2a69003c86470ea05deb9ecb9887be_2Fef2b0d623b10430ab58a87b17106aa33-fotor-bg-remover-20250902205922.png",
+            "gallery_hover_image_5": "shopify://shop_images/Adobe_Express_-_file.png",
+            "gallery_title_5": "Radiant",
+            "gallery_link_5": "shopify://collections/radiant",
+            "gallery_image_6": "shopify://shop_images/assets_2F9f2a69003c86470ea05deb9ecb9887be_2F157c3412b22442ad8575444b14dd1283-fotor-bg-remover-20250902205819.png",
+            "gallery_hover_image_6": "shopify://shop_images/Adobe_Express_-_file_1.png",
+            "gallery_title_6": "Pear",
+            "gallery_link_6": "shopify://collections/pear-1",
+            "gallery_image_7": "shopify://shop_images/assets_2F9f2a69003c86470ea05deb9ecb9887be_2Ffc43edd5dace4f6ca19258dea0258a6a-fotor-bg-remover-2025090221210.png",
+            "gallery_hover_image_7": "shopify://shop_images/Remove_background_project.png",
+            "gallery_title_7": "Elongated Cushion",
+            "gallery_link_7": "shopify://products/hudson-engraved-ring-in-18k-white-gold",
+            "gallery_image_8": "shopify://shop_images/assets_2F9f2a69003c86470ea05deb9ecb9887be_2F16c9dbe62f5a4ba4b4505f604d4af806-fotor-bg-remover-2025090221335.png",
+            "gallery_hover_image_8": "shopify://shop_images/Adobe_Express_-_file_2.png",
+            "gallery_title_8": "Cushion",
+            "gallery_link_8": "shopify://collections/cushion",
+            "gallery_image_9": "shopify://shop_images/assets_2F9f2a69003c86470ea05deb9ecb9887be_2F21423abdc53b4eeb877329a4b99d3cd4-fotor-bg-remover-2025090221425.png",
+            "gallery_hover_image_9": "shopify://shop_images/Adobe_Express_-_file_3.png",
+            "gallery_title_9": "Princess",
+            "gallery_link_9": "shopify://collections/princess",
+            "gallery_image_10": "shopify://shop_images/assets_2F9f2a69003c86470ea05deb9ecb9887be_2F03408d331fd448509c64ef71e0bd23b2-fotor-bg-remover-2025090221616.png",
+            "gallery_hover_image_10": "shopify://shop_images/Adobe_Express_-_file_5.png",
+            "gallery_title_10": "Asscher",
+            "gallery_link_10": "shopify://collections/asscher",
+            "background_color": "#e0e0e0",
+            "text_color": "#000000",
+            "main_title_size": 24,
+            "item_title_size": 14,
+            "border_radius": 8
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_6dbeca7_m9zXgd"
+      ],
+      "settings": {}
+    },
+    "1757189306ad30c151": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_6821929_7j3yEw": {
+          "type": "ai_gen_block_6821929",
+          "settings": {
+            "featured_image": "shopify://shop_images/WhatsApp_Image_2025-09-16_at_03.08.36_b3a70e65.jpg",
+            "image_aspect_ratio": "1",
+            "image_border_radius": 0,
+            "overlay_opacity": 40,
+            "title": "Start Your Stoke",
+            "title_size": 36,
+            "title_color": "#ffffff",
+            "button_text": "Shop Now",
+            "button_link": "shopify://collections/all-products",
+            "button_color": "#ffffff",
+            "button_hover_color": "#f0f0f0",
+            "button_text_color": "#000000",
+            "button_border_radius": 0,
+            "card_background": "#ffffff",
+            "card_text_color": "#000000",
+            "card_border_radius": 0,
+            "collection_1": "badgley-mischka-1",
+            "custom_image_1": "shopify://shop_images/WhatsApp_Image_2025-09-16_at_03.20.59_b32eae13.jpg",
+            "collection_2": "gift-for-her-1",
+            "custom_image_2": "shopify://shop_images/WhatsApp_Image_2025-09-16_at_03.22.03_1c1c6396.jpg",
+            "collection_3": "custom-creative",
+            "custom_image_3": "shopify://shop_images/WhatsApp_Image_2025-09-16_at_03.23.14_0cba6167.jpg",
+            "collection_4": "bangles-bracelets",
+            "custom_image_4": "shopify://shop_images/WhatsApp_Image_2025-09-16_at_03.24.01_7f279c0d.jpg"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_6821929_7j3yEw"
+      ],
+      "settings": {}
+    },
+    "1757196440cafec558": {
+      "type": "_blocks",
+      "settings": {}
+    },
+    "slideshow_y4YFkg": {
+      "type": "slideshow",
+      "blocks": {
+        "slide_VGtbiU": {
+          "type": "slide",
+          "settings": {
+            "image": "shopify://shop_images/tennis_collection_6bbe17ee-6c80-48ad-9b72-e02e714e52b7.webp",
+            "image_overlay_opacity": 0,
+            "heading": "The Ultimate Tennis  Collection",
+            "heading_size": "h0",
+            "subheading": "The viral styles you know and love, starting at the most accessible price points.",
+            "button_label": "Shop Now",
+            "link": "",
+            "button_style_secondary": false,
+            "show_text_box": false,
+            "box_align": "middle-left",
+            "text_alignment": "center",
+            "text_alignment_mobile": "center",
+            "color_scheme": ""
+          }
+        }
+      },
+      "block_order": [
+        "slide_VGtbiU"
+      ],
+      "name": "t:sections.slideshow.presets.name",
+      "settings": {
+        "layout": "full_bleed",
+        "slide_height": "medium",
+        "slider_visual": "counter",
+        "auto_rotate": false,
+        "change_slides_speed": 5,
+        "image_behavior": "none",
+        "show_text_below": true,
+        "accessibility_info": "Slideshow about our brand"
+      }
+    },
+    "17571923946952eb81": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_e2808ab_xtKaVH": {
+          "type": "ai_gen_block_e2808ab",
+          "disabled": true,
+          "settings": {
+            "subtitle": "LIMITED EDITION & EXCLUSIVE",
+            "heading": "Madison Keys Is Serving",
+            "text": "<p>Meet Madison — our first ever athlete partner. Our award-winning team designed a limited edition medallion with the pro tennis star just in time for the US Open — and it’s an ace.</p>",
+            "button_text": "Shop the Medallion",
+            "button_link": "",
+            "image": "shopify://shop_images/WhatsApp_Image_2025-09-16_at_03.43.11_3a51543b.jpg",
+            "subtitle_color": "#ffffff",
+            "heading_color": "#ffffff",
+            "text_color": "#ffffff",
+            "button_background_color": "#ffffff",
+            "button_text_color": "#183e40",
+            "button_hover_color": "#f0f0f0",
+            "button_border_radius": 0,
+            "mobile_content_order": "1",
+            "mobile_image_order": "2"
+          },
+          "blocks": {}
+        },
+        "ai_gen_block_6592bfd_Eqbpyk": {
+          "type": "ai_gen_block_6592bfd",
+          "settings": {
+            "section_heading": "20 Years of Yes",
+            "heading_size": 34,
+            "heading_color": "#000000",
+            "collections_count": 3,
+            "columns_mobile": "1",
+            "image_aspect_ratio": "1/1",
+            "text_color": "#ffffff",
+            "title_size": 24,
+            "description_size": 16,
+            "overlay_opacity": 0.4,
+            "button_bg_color": "#ffffff",
+            "button_text_color": "#000000",
+            "button_hover_bg_color": "#000000",
+            "button_hover_text_color": "#ffffff",
+            "button_font_size": 14,
+            "button_padding_vertical": 12,
+            "button_padding_horizontal": 24,
+            "button_border_radius": 4,
+            "button_border_width": 0,
+            "button_border_color": "#000000",
+            "collection_1": "custom-creative",
+            "custom_image_1": "shopify://shop_images/image2.jpg",
+            "custom_title_1": "Signature Collections",
+            "description_1": "Signature CollectionsDiscover our award-winning and exclusive collections",
+            "button_text_1": "Shop now",
+            "button_link_1": "",
+            "collection_2": "",
+            "custom_image_2": "shopify://shop_images/lab-grown-gemstones.jpg",
+            "custom_title_2": "Pacific Green Lab Diamonds",
+            "description_2": "A new and exclusive color.",
+            "button_text_2": "Shop now",
+            "button_link_2": "shopify://collections",
+            "collection_3": "",
+            "custom_image_3": "shopify://shop_images/360_F_1023050832_gR1v0tp24MulB0xq6KM8Y7cNDfW9xwJw.jpg",
+            "custom_title_3": "20th Anniversary Collection",
+            "description_3": "Celebrating two decades of design excellence.",
+            "button_text_3": "Shop now",
+            "button_link_3": "shopify://collections"
+          },
+          "blocks": {}
+        },
+        "ai_gen_block_b125f3a_MzeGmE": {
+          "type": "ai_gen_block_b125f3a",
+          "settings": {
+            "image": "shopify://shop_images/image_deebbc8e-f453-4105-9be3-cf2325ddbd95.jpg",
+            "title": "We're Here for You, In Person and",
+            "description": "Whether it’s at a store near you or online, we curate your appointment just for you.",
+            "button_1_text": "Visit a Showroom",
+            "button_1_link": "",
+            "button_2_text": "Book a Virtual Appointment",
+            "button_2_link": "",
+            "background_color": "#ffffff",
+            "title_color": "#000000",
+            "description_color": "#666666",
+            "primary_button_bg": "#000000",
+            "primary_button_color": "#ffffff",
+            "primary_button_hover_bg": "#ffffff",
+            "primary_button_hover_color": "#ffffff",
+            "secondary_button_bg": "rgba(0,0,0,0)",
+            "secondary_button_color": "#000000",
+            "secondary_button_border": "#000000",
+            "secondary_button_hover_bg": "#000000",
+            "secondary_button_hover_color": "#ffffff",
+            "secondary_button_hover_border": "#000000",
+            "title_size": 32,
+            "description_size": 16,
+            "button_font_size": 14,
+            "content_gap": 20,
+            "content_padding": 40,
+            "button_gap": 16,
+            "button_padding": 10,
+            "button_border_radius": 6
+          },
+          "blocks": {}
+        },
+        "ai_gen_block_7573ba1_k3N6Yr": {
+          "type": "ai_gen_block_7573ba1",
+          "settings": {
+            "heading": "We've Got You Covered",
+            "background_color": "#ffffff",
+            "heading_color": "#121212",
+            "text_color": "#121212",
+            "icon_background_color": "#ffffff",
+            "icon_color": "#666666",
+            "heading_size": 32,
+            "icon_size": 150,
+            "title_size": 14,
+            "description_size": 14,
+            "icon_spacing": 20,
+            "title_spacing": 10,
+            "feature_1_icon": "shopify://shop_images/Untitled_200_x_200_px.png",
+            "feature_1_title": "FREE SHIPPING & RETURNS",
+            "feature_1_link": "",
+            "feature_1_description": "",
+            "feature_2_icon": "shopify://shop_images/Free_Sheeping.webp",
+            "feature_2_title": "FREE LIFETIME WARRANTY",
+            "feature_2_link": "",
+            "feature_2_description": "",
+            "feature_3_icon": "shopify://shop_images/WhatsApp_Image_2025-09-19_at_14.29.31_bba178ae-removebg-preview.png",
+            "feature_3_title": "24/7 CUSTOMER SUPPORT",
+            "feature_3_link": "",
+            "feature_3_description": "",
+            "feature_4_icon": "shopify://shop_images/warranty-removebg-preview.png",
+            "feature_4_title": "LIFETIME DIAMOND UPGRADE",
+            "feature_4_link": "",
+            "feature_4_description": "",
+            "feature_5_icon": "shopify://shop_images/WhatsApp_Image_2025-09-19_at_14.29.31_bba178ae-removebg-preview.png",
+            "feature_5_title": "FREE 1-YEAR RESIZING",
+            "feature_5_link": "",
+            "feature_5_description": ""
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_e2808ab_xtKaVH",
+        "ai_gen_block_6592bfd_Eqbpyk",
+        "ai_gen_block_b125f3a_MzeGmE",
+        "ai_gen_block_7573ba1_k3N6Yr"
+      ],
+      "custom_css": [],
+      "settings": {}
+    },
+    "175724016299021ddc": {
+      "type": "_blocks",
+      "blocks": {
+        "ai_gen_block_1524fec_wGByyt": {
+          "type": "ai_gen_block_1524fec",
+          "settings": {
+            "main_image": "shopify://shop_images/WhatsApp_Image_2025-09-16_at_03.17.58_7832b421.jpg",
+            "image_border_radius": 0,
+            "heading": "20 YEARS OF OUR MISSION",
+            "title": "From our pioneering diamond standards to our unmatched transparency, we're redefining what it means to design, craft, and experience jewelry that makes a real difference.",
+            "description": "",
+            "learn_more_text": "Learn More",
+            "learn_more_link": "{{ closest.collection.url }}",
+            "heading_size": 20,
+            "title_size": 24,
+            "description_size": 16,
+            "link_size": 16,
+            "heading_color": "#666666",
+            "title_color": "#000000",
+            "description_color": "#333333",
+            "link_color": "#121212",
+            "link_hover_color": "#000000",
+            "collection_1": "aether-diamonds",
+            "collection_image_1": "shopify://shop_images/WhatsApp_Image_2025-09-16_at_03.15.57_2a4ed163.jpg",
+            "collection_2": "gift-for-her-1",
+            "collection_image_2": "shopify://shop_images/WhatsApp_Image_2025-09-16_at_03.18.57_41f256d6.jpg",
+            "collection_3": "bangles-bracelets",
+            "collection_image_3": "shopify://shop_images/WhatsApp_Image_2025-09-16_at_03.17.01_553499f9.jpg",
+            "collection_4": "",
+            "card_background_color": "#ffffff",
+            "card_text_color": "#000000",
+            "arrow_background_color": "#ffffff",
+            "arrow_hover_background_color": "#f5f5f5",
+            "arrow_color": "#000000"
+          },
+          "blocks": {}
+        }
+      },
+      "block_order": [
+        "ai_gen_block_1524fec_wGByyt"
+      ],
+      "settings": {}
+    }
+  },
+  "order": [
+    "1758232023db2b64dd",
+    "175823183878fbc2d1",
+    "1758229983b93d1f32",
+    "17572661933d4c6f9f",
+    "175723725210c1f7fc",
+    "175723459233c1874a",
+    "1757233885d8b74ee8",
+    "1757198489e4a57670",
+    "1757262468feddf733",
+    "1757101700c742228e",
+    "175710811135b346c8",
+    "1757158872926c1b17",
+    "17582333265c93dcf1",
+    "175711314554fdb004",
+    "1757112332a35042f2",
+    "1757110523b8136294",
+    "17571143218d680fab",
+    "1757147467fcc17f43",
+    "1757189306ad30c151",
+    "1757196440cafec558",
+    "slideshow_y4YFkg",
+    "17571923946952eb81",
+    "175724016299021ddc"
+  ]
+}

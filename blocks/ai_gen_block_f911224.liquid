@@ -1,0 +1,2023 @@
+{% doc %}
+  @prompt
+    Multi-step custom engagement ring form with 4 steps:
+    Step 1: Upload images/URL, description, metal color, ring size
+    Step 2: Diamond specifications (shape, carat, cut, color, clarity)
+    Step 3: Review all data with edit links, user info form
+    Step 4: Thank you message
+    
+    Pixel-perfect styling: #FFFFFF bg, #8B4513 accents, #000000 text, system-ui fonts
+    Async progression with JavaScript (no page reloads)
+    Data persistence via localStorage
+    Dynamic price calculation based on carat
+{% enddoc %}
+
+{% assign ai_gen_id = block.id | replace: '_', '' | downcase %}
+
+{% style %}
+  .ai-custom-form-{{ ai_gen_id }} {
+    background-color: #FFFFFF;
+    width: 100%;
+    font-family: system-ui, -apple-system, Arial, sans-serif;
+  }
+
+  .ai-custom-form-container-{{ ai_gen_id }} {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 60px 20px;
+  }
+
+  .ai-custom-form-breadcrumb-{{ ai_gen_id }} {
+    font-size: 12px;
+    color: #808080;
+    margin-bottom: 40px;
+    text-align: left;
+  }
+
+  /* Multi-step functionality */
+  .ai-custom-form-step-{{ ai_gen_id }} {
+    display: none;
+  }
+
+  .ai-custom-form-step-{{ ai_gen_id }}.active {
+    display: block;
+  }
+
+  .ai-custom-form-section-{{ ai_gen_id }} {
+    margin-bottom: 30px;
+  }
+
+  .ai-custom-form-icon-{{ ai_gen_id }} {
+    width: 40px;
+    height: 40px;
+    border: 2px solid #CCCCCC;
+    border-radius: 50%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 15px;
+    color: #808080;
+    font-size: 20px;
+    font-weight: bold;
+  }
+
+  .ai-custom-form-icon-{{ ai_gen_id }}.complete {
+    border-color: #8B4513;
+    color: #8B4513;
+  }
+
+  .ai-custom-form-title-{{ ai_gen_id }} {
+    font-size: 18px;
+    font-weight: bold;
+    color: #000000;
+    margin: 0 0 12px 0;
+  }
+
+  .ai-custom-form-heading-{{ ai_gen_id }} {
+    font-size: 28px;
+    font-weight: bold;
+    color: #000000;
+    margin: 0 0 30px 0;
+    text-align: center;
+  }
+
+  .ai-custom-form-note-{{ ai_gen_id }} {
+    font-size: 12px;
+    font-style: normal;
+    color: #666666;
+    margin-bottom: 8px;
+    line-height: 1.5;
+  }
+
+  .ai-custom-form-note-regular-{{ ai_gen_id }} {
+    font-size: 14px;
+    color: #666666;
+    margin-bottom: 15px;
+    line-height: 1.5;
+  }
+
+  .ai-custom-form-note-regular-{{ ai_gen_id }} a {
+    color: #8B4513;
+    text-decoration: underline;
+  }
+
+  .ai-custom-form-field-{{ ai_gen_id }} {
+    margin-bottom: 20px;
+  }
+
+  .ai-custom-form-label-{{ ai_gen_id }} {
+    font-size: 16px;
+    color: #000000;
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+
+  .ai-custom-form-input-{{ ai_gen_id }},
+  .ai-custom-form-textarea-{{ ai_gen_id }},
+  .ai-custom-form-select-{{ ai_gen_id }} {
+    width: 100%;
+    padding: 12px 15px;
+    font-size: 16px;
+    border: 1px solid #CCCCCC;
+    font-family: system-ui, -apple-system, Arial, sans-serif;
+    box-sizing: border-box;
+    border-radius: 4px;
+  }
+
+  .ai-custom-form-input-{{ ai_gen_id }}:focus,
+  .ai-custom-form-textarea-{{ ai_gen_id }}:focus,
+  .ai-custom-form-select-{{ ai_gen_id }}:focus {
+    outline: none;
+    border-color: #8B4513;
+  }
+
+  .ai-custom-form-textarea-{{ ai_gen_id }} {
+    height: 200px;
+    resize: vertical;
+  }
+
+  .ai-custom-form-file-wrapper-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+
+  .ai-custom-form-file-input-{{ ai_gen_id }} {
+    flex: 1;
+    padding: 12px 15px;
+    font-size: 14px;
+    border: 1px solid #CCCCCC;
+    font-family: system-ui, -apple-system, Arial, sans-serif;
+    border-radius: 4px;
+  }
+
+  .ai-custom-form-file-button-{{ ai_gen_id }} {
+    background-color: #8B4513;
+    color: #FFFFFF;
+    border: none;
+    padding: 12px 24px;
+    font-size: 18px;
+    cursor: pointer;
+    font-family: system-ui, -apple-system, Arial, sans-serif;
+    border-radius: 4px;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+  }
+
+  .ai-custom-form-file-button-{{ ai_gen_id }}:hover {
+    background-color: #6B3410;
+  }
+
+  .ai-custom-form-file-preview-{{ ai_gen_id }} {
+    font-size: 12px;
+    color: #808080;
+    margin-top: 5px;
+  }
+
+  .ai-custom-form-file-preview-{{ ai_gen_id }} img {
+    max-width: 100px;
+    max-height: 100px;
+    margin-top: 10px;
+    border: 1px solid #CCCCCC;
+    border-radius: 4px;
+  }
+
+  .ai-custom-form-divider-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    margin: 30px 0;
+  }
+
+  .ai-custom-form-divider-line-{{ ai_gen_id }} {
+    flex: 1;
+    height: 1px;
+    background-color: #E0E0E0;
+  }
+
+  .ai-custom-form-divider-text-{{ ai_gen_id }} {
+    padding: 0 20px;
+    font-size: 14px;
+    color: #808080;
+    font-weight: 500;
+  }
+
+  .ai-custom-form-metal-options-{{ ai_gen_id }} {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    margin-top: 15px;
+  }
+
+  .ai-custom-form-metal-option-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+  }
+
+  .ai-custom-form-metal-circle-{{ ai_gen_id }} {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    border: 2px solid #DDDDDD;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-bottom: 5px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ai-custom-form-metal-circle-{{ ai_gen_id }}::before {
+    content: '';
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    position: absolute;
+  }
+
+  .ai-custom-form-metal-circle-{{ ai_gen_id }}.white {
+    background-color: #F8F8F8;
+  }
+
+  .ai-custom-form-metal-circle-{{ ai_gen_id }}.white::before {
+    background-color: #F5F5F5;
+    border: 1px solid #E0E0E0;
+  }
+
+  .ai-custom-form-metal-circle-{{ ai_gen_id }}.yellow {
+    background-color: #FFF9E6;
+  }
+
+  .ai-custom-form-metal-circle-{{ ai_gen_id }}.yellow::before {
+    background-color: #FFD700;
+  }
+
+  .ai-custom-form-metal-circle-{{ ai_gen_id }}.rose {
+    background-color: #FFF0F3;
+  }
+
+  .ai-custom-form-metal-circle-{{ ai_gen_id }}.rose::before {
+    background-color: #FFC0CB;
+  }
+
+  .ai-custom-form-metal-circle-{{ ai_gen_id }}.platinum {
+    background-color: #F5F5F5;
+  }
+
+  .ai-custom-form-metal-circle-{{ ai_gen_id }}.platinum::before {
+    background-color: #E5E4E2;
+    border: 1px solid #D0D0D0;
+  }
+
+  .ai-custom-form-metal-circle-{{ ai_gen_id }}.selected {
+    border: 3px solid #8B4513;
+    box-shadow: 0 0 0 3px rgba(139, 69, 19, 0.15);
+  }
+
+  .ai-custom-form-metal-label-{{ ai_gen_id }} {
+    font-size: 12px;
+    color: #000;
+    text-align: center;
+  }
+
+  .ai-custom-form-metal-input-{{ ai_gen_id }} {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .ai-custom-form-link-{{ ai_gen_id }} {
+    color: #8B4513;
+    text-decoration: underline;
+    font-size: 14px;
+    display: inline-block;
+    margin-top: 10px;
+    cursor: pointer;
+  }
+
+  .ai-custom-form-link-{{ ai_gen_id }}:hover {
+    color: #6B3410;
+  }
+
+  .ai-custom-form-button-group-{{ ai_gen_id }} {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 40px;
+  }
+
+  .ai-custom-form-submit-{{ ai_gen_id }},
+  .ai-custom-form-button-{{ ai_gen_id }} {
+    background-color: #000000;
+    color: #FFFFFF;
+    border: none;
+    padding: 15px 50px;
+    font-size: 16px;
+    font-weight: bold;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: inline-block;
+    font-family: system-ui, -apple-system, Arial, sans-serif;
+    border-radius: 0;
+    min-width: 200px;
+    transition: background-color 0.2s ease;
+  }
+
+  .ai-custom-form-submit-{{ ai_gen_id }}:hover,
+  .ai-custom-form-button-{{ ai_gen_id }}:hover {
+    background-color: #333333;
+  }
+
+  .ai-custom-form-button-{{ ai_gen_id }}.secondary {
+    background-color: #FFFFFF;
+    color: #000000;
+    border: 2px solid #000000;
+  }
+
+  .ai-custom-form-button-{{ ai_gen_id }}.secondary:hover {
+    background-color: #F5F5F5;
+  }
+
+  .ai-custom-form-success-{{ ai_gen_id }} {
+    background-color: #d4edda;
+    color: #155724;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid #c3e6cb;
+    font-size: 14px;
+  }
+
+  .ai-custom-form-error-{{ ai_gen_id }} {
+    background-color: #f8d7da;
+    color: #721c24;
+    padding: 15px;
+    margin-bottom: 20px;
+    border: 1px solid #f5c6cb;
+    font-size: 14px;
+    border-radius: 4px;
+  }
+
+  /* Step 2 - Diamond Specifications */
+  .ai-custom-form-diamond-options-{{ ai_gen_id }} {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 40px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .ai-custom-form-diamond-option-{{ ai_gen_id }} {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+  }
+
+  .ai-custom-form-diamond-option-{{ ai_gen_id }} input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+  }
+
+  .ai-custom-form-diamond-option-{{ ai_gen_id }} label {
+    font-size: 16px;
+    color: #000000;
+    cursor: pointer;
+  }
+
+  .ai-custom-form-diamond-option-{{ ai_gen_id }}.selected label {
+    color: #8B4513;
+    font-weight: bold;
+  }
+
+  .ai-custom-form-diamond-display-{{ ai_gen_id }} {
+    text-align: center;
+    margin: 40px 0;
+  }
+
+  .ai-custom-form-diamond-display-{{ ai_gen_id }} h3 {
+    font-size: 20px;
+    font-weight: bold;
+    color: #000000;
+    margin-bottom: 20px;
+  }
+
+  .ai-custom-form-diamond-image-{{ ai_gen_id }} {
+    width: 150px;
+    height: 150px;
+    margin: 0 auto 20px;
+  }
+
+  .ai-custom-form-diamond-image-{{ ai_gen_id }} img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+
+  .ai-custom-form-diamond-info-{{ ai_gen_id }} {
+    font-size: 18px;
+    color: #000000;
+    margin-bottom: 10px;
+  }
+
+  .ai-custom-form-diamond-info-{{ ai_gen_id }} strong {
+    font-weight: bold;
+  }
+
+  .ai-custom-form-shape-selector-{{ ai_gen_id }} {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 30px 0;
+  }
+
+  .ai-custom-form-shape-item-{{ ai_gen_id }} {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    padding: 10px;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+  }
+
+  .ai-custom-form-shape-item-{{ ai_gen_id }}.selected {
+    border-color: #8B4513;
+    background-color: #FFF8F0;
+  }
+
+  .ai-custom-form-shape-item-{{ ai_gen_id }} img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+  }
+
+  .ai-custom-form-shape-item-{{ ai_gen_id }} span {
+    font-size: 12px;
+    color: #000000;
+    text-align: center;
+  }
+
+  .ai-custom-form-carat-slider-{{ ai_gen_id }} {
+    margin: 30px 0;
+  }
+
+  .ai-custom-form-carat-slider-{{ ai_gen_id }} label {
+    font-size: 16px;
+    font-weight: bold;
+    color: #000000;
+    display: block;
+    margin-bottom: 15px;
+  }
+
+  .ai-custom-form-carat-values-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .ai-custom-form-carat-value-{{ ai_gen_id }} {
+    padding: 10px 20px;
+    border: 1px solid #CCCCCC;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #000000;
+    transition: all 0.2s ease;
+    text-align: center;
+    flex: 1;
+    min-width: 80px;
+  }
+
+  .ai-custom-form-carat-value-{{ ai_gen_id }}.selected {
+    border-color: #8B4513;
+    background-color: #8B4513;
+    color: #FFFFFF;
+    font-weight: bold;
+  }
+
+  .ai-custom-form-two-column-{{ ai_gen_id }} {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 40px;
+    margin-top: 40px;
+  }
+
+  .ai-custom-form-requirements-panel-{{ ai_gen_id }} {
+    background-color: #F9F9F9;
+    padding: 30px;
+    border-radius: 8px;
+  }
+
+  .ai-custom-form-requirements-panel-{{ ai_gen_id }} h4 {
+    font-size: 18px;
+    font-weight: bold;
+    color: #000000;
+    margin-bottom: 20px;
+  }
+
+  /* Step 3 - Review */
+  .ai-custom-form-review-section-{{ ai_gen_id }} {
+    background-color: #F9F9F9;
+    padding: 30px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+  }
+
+  .ai-custom-form-review-section-{{ ai_gen_id }} h3 {
+    font-size: 20px;
+    font-weight: bold;
+    color: #000000;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .ai-custom-form-edit-link-{{ ai_gen_id }} {
+    font-size: 14px;
+    color: #8B4513;
+    text-decoration: underline;
+    cursor: pointer;
+    font-weight: normal;
+  }
+
+  .ai-custom-form-review-item-{{ ai_gen_id }} {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #E0E0E0;
+  }
+
+  .ai-custom-form-review-item-{{ ai_gen_id }}:last-child {
+    border-bottom: none;
+  }
+
+  .ai-custom-form-review-label-{{ ai_gen_id }} {
+    font-size: 14px;
+    color: #666666;
+    font-weight: 500;
+  }
+
+  .ai-custom-form-review-value-{{ ai_gen_id }} {
+    font-size: 14px;
+    color: #000000;
+    font-weight: bold;
+    text-align: right;
+  }
+
+  .ai-custom-form-checkbox-wrapper-{{ ai_gen_id }} {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin: 20px 0;
+  }
+
+  .ai-custom-form-checkbox-wrapper-{{ ai_gen_id }} input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    margin-top: 2px;
+    cursor: pointer;
+  }
+
+  .ai-custom-form-checkbox-wrapper-{{ ai_gen_id }} label {
+    font-size: 14px;
+    color: #000000;
+    cursor: pointer;
+    line-height: 1.5;
+  }
+
+  /* Step 4 - Thank You */
+  .ai-custom-form-thank-you-{{ ai_gen_id }} {
+    text-align: center;
+    padding: 60px 20px;
+  }
+
+  .ai-custom-form-thank-you-{{ ai_gen_id }} h2 {
+    font-size: 32px;
+    font-weight: bold;
+    color: #000000;
+    margin-bottom: 30px;
+  }
+
+  .ai-custom-form-thank-you-{{ ai_gen_id }} p {
+    font-size: 16px;
+    color: #666666;
+    line-height: 1.8;
+    max-width: 700px;
+    margin: 0 auto 40px;
+  }
+
+  @media screen and (max-width: 767px) {
+    .ai-custom-form-container-{{ ai_gen_id }} {
+      padding: 30px 15px;
+    }
+
+    .ai-custom-form-heading-{{ ai_gen_id }} {
+      font-size: 22px;
+    }
+
+    .ai-custom-form-title-{{ ai_gen_id }} {
+      font-size: 16px;
+    }
+
+    .ai-custom-form-section-{{ ai_gen_id }} {
+      margin-bottom: 25px;
+    }
+
+    .ai-custom-form-metal-options-{{ ai_gen_id }} {
+      gap: 12px;
+    }
+
+    .ai-custom-form-file-wrapper-{{ ai_gen_id }} {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .ai-custom-form-button-group-{{ ai_gen_id }} {
+      flex-direction: column;
+    }
+
+    .ai-custom-form-submit-{{ ai_gen_id }},
+    .ai-custom-form-button-{{ ai_gen_id }} {
+      width: 100%;
+      min-width: auto;
+    }
+
+    .ai-custom-form-two-column-{{ ai_gen_id }} {
+      grid-template-columns: 1fr;
+      gap: 30px;
+    }
+
+    .ai-custom-form-shape-selector-{{ ai_gen_id }} {
+      gap: 10px;
+    }
+
+    .ai-custom-form-carat-values-{{ ai_gen_id }} {
+      gap: 8px;
+    }
+
+    .ai-custom-form-carat-value-{{ ai_gen_id }} {
+      padding: 8px 12px;
+      font-size: 12px;
+      min-width: 60px;
+    }
+
+    .ai-custom-form-diamond-options-{{ ai_gen_id }} {
+      flex-direction: column;
+      gap: 15px;
+      align-items: flex-start;
+    }
+  }
+{% endstyle %}
+
+<custom-engagement-form-{{ ai_gen_id }} class="ai-custom-form-{{ ai_gen_id }}" {{ block.shopify_attributes }}>
+  <div class="ai-custom-form-container-{{ ai_gen_id }}">
+    <div class="ai-custom-form-breadcrumb-{{ ai_gen_id }}">
+      {{ block.settings.breadcrumb_text }}
+    </div>
+
+    <!-- Step 1: Upload & Basic Info -->
+    <div class="ai-custom-form-step-{{ ai_gen_id }} active" data-step="1">
+      
+      <!-- Upload Section - Two Column Layout -->
+      <div class="ai-custom-form-two-column-{{ ai_gen_id }}" style="margin-bottom: 50px;">
+        <div>
+          <div class="ai-custom-form-icon-{{ ai_gen_id }}">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+              <polyline points="17 8 12 3 7 8"></polyline>
+              <line x1="12" y1="3" x2="12" y2="15"></line>
+            </svg>
+          </div>
+          <h2 class="ai-custom-form-title-{{ ai_gen_id }}">{{ block.settings.upload_title }}</h2>
+          <div class="ai-custom-form-note-{{ ai_gen_id }}">{{ block.settings.upload_note_1 }}</div>
+          <div class="ai-custom-form-note-{{ ai_gen_id }}">{{ block.settings.upload_note_2 }}</div>
+          <div class="ai-custom-form-note-{{ ai_gen_id }}">{{ block.settings.upload_note_3 }}</div>
+        </div>
+
+        <div>
+          <div class="ai-custom-form-field-{{ ai_gen_id }}">
+            <label class="ai-custom-form-label-{{ ai_gen_id }}">{{ block.settings.picture_label }}*</label>
+            <div style="display: flex; gap: 15px; align-items: flex-start;">
+              <div style="flex: 1;">
+                <div class="ai-custom-form-file-wrapper-{{ ai_gen_id }}">
+                  <input
+                    type="file"
+                    id="file-input-1-{{ ai_gen_id }}"
+                    class="ai-custom-form-file-input-{{ ai_gen_id }}"
+                    accept=".jpg,.jpeg,.png,.webp"
+                    data-file-input="1"
+                  >
+                  <button type="button" class="ai-custom-form-file-button-{{ ai_gen_id }}" data-file-trigger="1">+</button>
+                </div>
+                <div class="ai-custom-form-file-preview-{{ ai_gen_id }}" data-file-preview="1"></div>
+                <div class="ai-custom-form-note-{{ ai_gen_id }}" style="margin-top: 5px; text-align: center;">View 1*</div>
+              </div>
+              
+              <div style="flex: 1;">
+                <div class="ai-custom-form-file-wrapper-{{ ai_gen_id }}">
+                  <input
+                    type="file"
+                    id="file-input-2-{{ ai_gen_id }}"
+                    class="ai-custom-form-file-input-{{ ai_gen_id }}"
+                    accept=".jpg,.jpeg,.png,.webp"
+                    data-file-input="2"
+                  >
+                  <button type="button" class="ai-custom-form-file-button-{{ ai_gen_id }}" data-file-trigger="2">+</button>
+                </div>
+                <div class="ai-custom-form-file-preview-{{ ai_gen_id }}" data-file-preview="2"></div>
+                <div class="ai-custom-form-note-{{ ai_gen_id }}" style="margin-top: 5px; text-align: center;">View 2</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="ai-custom-form-divider-{{ ai_gen_id }}">
+            <div class="ai-custom-form-divider-line-{{ ai_gen_id }}"></div>
+            <div class="ai-custom-form-divider-text-{{ ai_gen_id }}">OR</div>
+            <div class="ai-custom-form-divider-line-{{ ai_gen_id }}"></div>
+          </div>
+
+          <div class="ai-custom-form-field-{{ ai_gen_id }}">
+            <label class="ai-custom-form-label-{{ ai_gen_id }}">{{ block.settings.url_label }}</label>
+            <input
+              type="url"
+              id="image-url-{{ ai_gen_id }}"
+              class="ai-custom-form-input-{{ ai_gen_id }}"
+              placeholder="{{ block.settings.url_placeholder }}"
+              data-field="image_url"
+            >
+          </div>
+        </div>
+      </div>
+
+      <!-- Tell Us More Section - Two Column Layout -->
+      <div class="ai-custom-form-two-column-{{ ai_gen_id }}" style="margin-bottom: 50px;">
+        <div>
+          <div class="ai-custom-form-icon-{{ ai_gen_id }}">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+            </svg>
+          </div>
+          <h2 class="ai-custom-form-title-{{ ai_gen_id }}">{{ block.settings.description_title }}</h2>
+          <div class="ai-custom-form-note-regular-{{ ai_gen_id }}">{{ block.settings.description_note }}</div>
+        </div>
+
+        <div>
+          <div class="ai-custom-form-field-{{ ai_gen_id }}">
+            <label class="ai-custom-form-label-{{ ai_gen_id }}">Tell us what to modify or to keep exactly the same*</label>
+            <textarea
+              id="description-{{ ai_gen_id }}"
+              class="ai-custom-form-textarea-{{ ai_gen_id }}"
+              placeholder="{{ block.settings.description_placeholder }}"
+              data-field="description"
+            ></textarea>
+            <div class="ai-custom-form-note-{{ ai_gen_id }}" style="margin-top: 10px;">0 CHARACTERS</div>
+            <div class="ai-custom-form-note-{{ ai_gen_id }}" style="margin-top: 5px;">
+              *Please note that while we may be able to match another rings' materials, we must match that we are not damage any other trademarks.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Metal Color & Ring Size Section - Two Column Layout -->
+      <div class="ai-custom-form-two-column-{{ ai_gen_id }}" style="margin-bottom: 50px;">
+        <div>
+          <div class="ai-custom-form-icon-{{ ai_gen_id }}">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="8" r="7"></circle>
+              <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"></polyline>
+            </svg>
+          </div>
+          <h2 class="ai-custom-form-title-{{ ai_gen_id }}">{{ block.settings.options_title }}</h2>
+          <div class="ai-custom-form-note-regular-{{ ai_gen_id }}">
+            {{ block.settings.options_note }} Then be sure to provide your accurate ring size. If you need help determining the correct ring size, <a href="{{ block.settings.ring_size_link }}" class="ai-custom-form-link-{{ ai_gen_id }}" style="text-decoration: underline;">{{ block.settings.ring_size_link_text }}</a>
+          </div>
+        </div>
+
+        <div>
+          <div class="ai-custom-form-field-{{ ai_gen_id }}">
+            <label class="ai-custom-form-label-{{ ai_gen_id }}">{{ block.settings.metal_color_label }}*</label>
+            <div id="metal-selected-{{ ai_gen_id }}" class="ai-custom-form-note-{{ ai_gen_id }}" style="margin-bottom: 15px; font-weight: bold; color: #000000;"></div>
+            <div class="ai-custom-form-metal-options-{{ ai_gen_id }}">
+            <div class="ai-custom-form-metal-option-{{ ai_gen_id }}">
+              <label>
+                <input
+                  type="radio"
+                  name="metal_color_{{ ai_gen_id }}"
+                  value="14K White"
+                  class="ai-custom-form-metal-input-{{ ai_gen_id }}"
+                  data-metal-radio
+                  data-field="metal_color"
+                >
+                <div class="ai-custom-form-metal-circle-{{ ai_gen_id }} white" data-metal-circle></div>
+                <div class="ai-custom-form-metal-label-{{ ai_gen_id }}">14K White</div>
+              </label>
+            </div>
+            <div class="ai-custom-form-metal-option-{{ ai_gen_id }}">
+              <label>
+                <input
+                  type="radio"
+                  name="metal_color_{{ ai_gen_id }}"
+                  value="14K Yellow"
+                  class="ai-custom-form-metal-input-{{ ai_gen_id }}"
+                  data-metal-radio
+                  data-field="metal_color"
+                >
+                <div class="ai-custom-form-metal-circle-{{ ai_gen_id }} yellow" data-metal-circle></div>
+                <div class="ai-custom-form-metal-label-{{ ai_gen_id }}">14K Yellow</div>
+              </label>
+            </div>
+            <div class="ai-custom-form-metal-option-{{ ai_gen_id }}">
+              <label>
+                <input
+                  type="radio"
+                  name="metal_color_{{ ai_gen_id }}"
+                  value="14K Rose"
+                  class="ai-custom-form-metal-input-{{ ai_gen_id }}"
+                  data-metal-radio
+                  data-field="metal_color"
+                >
+                <div class="ai-custom-form-metal-circle-{{ ai_gen_id }} rose" data-metal-circle></div>
+                <div class="ai-custom-form-metal-label-{{ ai_gen_id }}">14K Rose</div>
+              </label>
+            </div>
+            <div class="ai-custom-form-metal-option-{{ ai_gen_id }}">
+              <label>
+                <input
+                  type="radio"
+                  name="metal_color_{{ ai_gen_id }}"
+                  value="18K White"
+                  class="ai-custom-form-metal-input-{{ ai_gen_id }}"
+                  data-metal-radio
+                  data-field="metal_color"
+                >
+                <div class="ai-custom-form-metal-circle-{{ ai_gen_id }} white" data-metal-circle></div>
+                <div class="ai-custom-form-metal-label-{{ ai_gen_id }}">18K White</div>
+              </label>
+            </div>
+            <div class="ai-custom-form-metal-option-{{ ai_gen_id }}">
+              <label>
+                <input
+                  type="radio"
+                  name="metal_color_{{ ai_gen_id }}"
+                  value="18K Yellow"
+                  class="ai-custom-form-metal-input-{{ ai_gen_id }}"
+                  data-metal-radio
+                  data-field="metal_color"
+                >
+                <div class="ai-custom-form-metal-circle-{{ ai_gen_id }} yellow" data-metal-circle></div>
+                <div class="ai-custom-form-metal-label-{{ ai_gen_id }}">18K Yellow</div>
+              </label>
+            </div>
+            <div class="ai-custom-form-metal-option-{{ ai_gen_id }}">
+              <label>
+                <input
+                  type="radio"
+                  name="metal_color_{{ ai_gen_id }}"
+                  value="18K Rose"
+                  class="ai-custom-form-metal-input-{{ ai_gen_id }}"
+                  data-metal-radio
+                  data-field="metal_color"
+                >
+                <div class="ai-custom-form-metal-circle-{{ ai_gen_id }} rose" data-metal-circle></div>
+                <div class="ai-custom-form-metal-label-{{ ai_gen_id }}">18K Rose</div>
+              </label>
+            </div>
+            <div class="ai-custom-form-metal-option-{{ ai_gen_id }}">
+              <label>
+                <input
+                  type="radio"
+                  name="metal_color_{{ ai_gen_id }}"
+                  value="Platinum"
+                  class="ai-custom-form-metal-input-{{ ai_gen_id }}"
+                  data-metal-radio
+                  data-field="metal_color"
+                >
+                <div class="ai-custom-form-metal-circle-{{ ai_gen_id }} platinum" data-metal-circle></div>
+                <div class="ai-custom-form-metal-label-{{ ai_gen_id }}">PL</div>
+              </label>
+            </div>
+          </div>
+          </div>
+
+          <div class="ai-custom-form-field-{{ ai_gen_id }}">
+            <label class="ai-custom-form-label-{{ ai_gen_id }}">{{ block.settings.ring_size_label }}*</label>
+            <select id="ring-size-{{ ai_gen_id }}" class="ai-custom-form-select-{{ ai_gen_id }}" data-field="ring_size">
+              <option value="">{{ block.settings.ring_size_placeholder }}</option>
+              <option value="3">3</option>
+              <option value="3.5">3.5</option>
+              <option value="4">4</option>
+              <option value="4.5">4.5</option>
+              <option value="5">5</option>
+              <option value="5.5">5.5</option>
+              <option value="6">6</option>
+              <option value="6.5">6.5</option>
+              <option value="7">7</option>
+              <option value="7.5">7.5</option>
+              <option value="8">8</option>
+              <option value="8.5">8.5</option>
+              <option value="9">9</option>
+              <option value="9.5">9.5</option>
+              <option value="10">10</option>
+              <option value="10.5">10.5</option>
+              <option value="11">11</option>
+              <option value="11.5">11.5</option>
+              <option value="12">12</option>
+              <option value="12.5">12.5</option>
+              <option value="13">13</option>
+            </select>
+            <a href="{{ block.settings.find_ring_size_link }}" class="ai-custom-form-link-{{ ai_gen_id }}" style="text-decoration: underline;">{{ block.settings.find_ring_size_text }}</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="ai-custom-form-button-group-{{ ai_gen_id }}">
+        <button type="button" class="ai-custom-form-button-{{ ai_gen_id }}" data-continue-step1>
+          CONTINUE
+        </button>
+      </div>
+    </div>
+    <!-- End Step 1 -->
+
+    <!-- Step 2: Diamond Specifications -->
+    <div class="ai-custom-form-step-{{ ai_gen_id }}" data-step="2">
+      <h2 class="ai-custom-form-heading-{{ ai_gen_id }}">Your Center Shape & Carat</h2>
+
+      <div class="ai-custom-form-diamond-options-{{ ai_gen_id }}">
+        <div class="ai-custom-form-diamond-option-{{ ai_gen_id }} selected">
+          <input type="radio" name="diamond_option_{{ ai_gen_id }}" value="specify" id="diamond-specify-{{ ai_gen_id }}" checked data-field="diamond_option">
+          <label for="diamond-specify-{{ ai_gen_id }}">Option 1: Specify Diamond Requirements</label>
+        </div>
+        <div class="ai-custom-form-diamond-option-{{ ai_gen_id }}">
+          <input type="radio" name="diamond_option_{{ ai_gen_id }}" value="choose" id="diamond-choose-{{ ai_gen_id }}" data-field="diamond_option">
+          <label for="diamond-choose-{{ ai_gen_id }}">Option 2: Choose a Specific Diamond</label>
+        </div>
+      </div>
+
+      <div class="ai-custom-form-diamond-display-{{ ai_gen_id }}">
+        <h3>Your Center Shape & Carat</h3>
+        <div class="ai-custom-form-diamond-image-{{ ai_gen_id }}" id="diamond-image-{{ ai_gen_id }}">
+          <svg width="150" height="150" viewBox="0 0 100 100" fill="none" stroke="#000" stroke-width="1">
+            <polygon points="50,10 70,35 60,90 40,90 30,35" fill="#E8F4F8" stroke="#333"/>
+            <line x1="30" y1="35" x2="70" y2="35" stroke="#333"/>
+            <line x1="50" y1="10" x2="50" y2="90" stroke="#333"/>
+            <line x1="30" y1="35" x2="60" y2="90" stroke="#333"/>
+            <line x1="70" y1="35" x2="40" y2="90" stroke="#333"/>
+          </svg>
+        </div>
+        <div class="ai-custom-form-diamond-info-{{ ai_gen_id }}" id="diamond-info-{{ ai_gen_id }}">
+          <strong>Round - 3.00 ct</strong><br>
+          Price - <span id="diamond-price-{{ ai_gen_id }}">$3,475</span>
+        </div>
+      </div>
+
+      <div class="ai-custom-form-section-{{ ai_gen_id }}">
+        <label class="ai-custom-form-label-{{ ai_gen_id }}">Shape</label>
+        <div class="ai-custom-form-shape-selector-{{ ai_gen_id }}" id="shape-selector-{{ ai_gen_id }}">
+          <div class="ai-custom-form-shape-item-{{ ai_gen_id }} selected" data-shape="Round">
+            <svg width="50" height="50" viewBox="0 0 50 50"><circle cx="25" cy="25" r="20" fill="#E8F4F8" stroke="#333"/></svg>
+            <span>Round</span>
+          </div>
+          <div class="ai-custom-form-shape-item-{{ ai_gen_id }}" data-shape="Oval">
+            <svg width="50" height="50" viewBox="0 0 50 50"><ellipse cx="25" cy="25" rx="15" ry="22" fill="#E8F4F8" stroke="#333"/></svg>
+            <span>Oval</span>
+          </div>
+          <div class="ai-custom-form-shape-item-{{ ai_gen_id }}" data-shape="Cushion">
+            <svg width="50" height="50" viewBox="0 0 50 50"><rect x="10" y="10" width="30" height="30" rx="8" fill="#E8F4F8" stroke="#333"/></svg>
+            <span>Cushion</span>
+          </div>
+          <div class="ai-custom-form-shape-item-{{ ai_gen_id }}" data-shape="Emerald">
+            <svg width="50" height="50" viewBox="0 0 50 50"><rect x="12" y="8" width="26" height="34" fill="#E8F4F8" stroke="#333"/></svg>
+            <span>Emerald</span>
+          </div>
+          <div class="ai-custom-form-shape-item-{{ ai_gen_id }}" data-shape="Pear">
+            <svg width="50" height="50" viewBox="0 0 50 50"><path d="M25,5 Q35,15 35,30 Q35,40 25,45 Q15,40 15,30 Q15,15 25,5 Z" fill="#E8F4F8" stroke="#333"/></svg>
+            <span>Pear</span>
+          </div>
+          <div class="ai-custom-form-shape-item-{{ ai_gen_id }}" data-shape="Radiant">
+            <svg width="50" height="50" viewBox="0 0 50 50"><rect x="10" y="10" width="30" height="30" fill="#E8F4F8" stroke="#333"/></svg>
+            <span>Radiant</span>
+          </div>
+          <div class="ai-custom-form-shape-item-{{ ai_gen_id }}" data-shape="Asscher">
+            <svg width="50" height="50" viewBox="0 0 50 50"><rect x="12" y="12" width="26" height="26" fill="#E8F4F8" stroke="#333"/></svg>
+            <span>Asscher</span>
+          </div>
+          <div class="ai-custom-form-shape-item-{{ ai_gen_id }}" data-shape="Marquise">
+            <svg width="50" height="50" viewBox="0 0 50 50"><ellipse cx="25" cy="25" rx="10" ry="22" fill="#E8F4F8" stroke="#333"/></svg>
+            <span>Marquise</span>
+          </div>
+          <div class="ai-custom-form-shape-item-{{ ai_gen_id }}" data-shape="Heart">
+            <svg width="50" height="50" viewBox="0 0 50 50"><path d="M25,40 Q15,30 10,22 Q8,15 12,12 Q18,8 25,15 Q32,8 38,12 Q42,15 40,22 Q35,30 25,40 Z" fill="#E8F4F8" stroke="#333"/></svg>
+            <span>Heart</span>
+          </div>
+          <div class="ai-custom-form-shape-item-{{ ai_gen_id }}" data-shape="Princess">
+            <svg width="50" height="50" viewBox="0 0 50 50"><rect x="10" y="10" width="30" height="30" fill="#E8F4F8" stroke="#333"/></svg>
+            <span>Princess</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="ai-custom-form-section-{{ ai_gen_id }}">
+        <div class="ai-custom-form-carat-slider-{{ ai_gen_id }}">
+          <label>Carat</label>
+          <div class="ai-custom-form-carat-values-{{ ai_gen_id }}" id="carat-selector-{{ ai_gen_id }}">
+            <div class="ai-custom-form-carat-value-{{ ai_gen_id }}" data-carat="1.50">1.50ct</div>
+            <div class="ai-custom-form-carat-value-{{ ai_gen_id }}" data-carat="2.00">2.00ct</div>
+            <div class="ai-custom-form-carat-value-{{ ai_gen_id }}" data-carat="2.50">2.50ct</div>
+            <div class="ai-custom-form-carat-value-{{ ai_gen_id }} selected" data-carat="3.00">3.00ct</div>
+            <div class="ai-custom-form-carat-value-{{ ai_gen_id }}" data-carat="3.50">3.50ct</div>
+            <div class="ai-custom-form-carat-value-{{ ai_gen_id }}" data-carat="4.00">4.00ct</div>
+            <div class="ai-custom-form-carat-value-{{ ai_gen_id }}" data-carat="4.50">4.50ct</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ai-custom-form-two-column-{{ ai_gen_id }}">
+        <div>
+          <div class="ai-custom-form-field-{{ ai_gen_id }}">
+            <label class="ai-custom-form-label-{{ ai_gen_id }}">Minimum Carat</label>
+            <input type="number" id="min-carat-{{ ai_gen_id }}" class="ai-custom-form-input-{{ ai_gen_id }}" placeholder="1.5" step="0.25" min="1.5" max="4.5" data-field="min_carat">
+          </div>
+          <div class="ai-custom-form-field-{{ ai_gen_id }}">
+            <label class="ai-custom-form-label-{{ ai_gen_id }}">Cut</label>
+            <select id="cut-{{ ai_gen_id }}" class="ai-custom-form-select-{{ ai_gen_id }}" data-field="cut">
+              <option value="">Select Cut</option>
+              <option value="Excellent">Excellent</option>
+              <option value="Very Good">Very Good</option>
+              <option value="Good">Good</option>
+              <option value="Fair">Fair</option>
+            </select>
+          </div>
+          <div class="ai-custom-form-field-{{ ai_gen_id }}">
+            <label class="ai-custom-form-label-{{ ai_gen_id }}">Color</label>
+            <select id="color-{{ ai_gen_id }}" class="ai-custom-form-select-{{ ai_gen_id }}" data-field="color">
+              <option value="">Select Color</option>
+              <option value="D">D</option>
+              <option value="E">E</option>
+              <option value="F">F</option>
+              <option value="G">G</option>
+              <option value="H">H</option>
+              <option value="I">I</option>
+              <option value="J">J</option>
+            </select>
+          </div>
+          <div class="ai-custom-form-field-{{ ai_gen_id }}">
+            <label class="ai-custom-form-label-{{ ai_gen_id }}">Clarity</label>
+            <select id="clarity-{{ ai_gen_id }}" class="ai-custom-form-select-{{ ai_gen_id }}" data-field="clarity">
+              <option value="">Select Clarity</option>
+              <option value="FL">FL</option>
+              <option value="IF">IF</option>
+              <option value="VVS1">VVS1</option>
+              <option value="VVS2">VVS2</option>
+              <option value="VS1">VS1</option>
+              <option value="VS2">VS2</option>
+              <option value="SI1">SI1</option>
+              <option value="SI2">SI2</option>
+              <option value="I1">I1</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="ai-custom-form-requirements-panel-{{ ai_gen_id }}">
+          <h4>Specify Your Diamond Requirements</h4>
+          <p class="ai-custom-form-note-regular-{{ ai_gen_id }}">
+            For this option, you select your diamond shape, carat weight, and quality for your Truly Custom design. Then our diamond team will hand-select the perfect diamond based on your requirements. The diamond prices shown here are based on E color and VS1 clarity. Changing your diamond quality up or down will affect the price of your Truly Custom design.
+          </p>
+        </div>
+      </div>
+
+      <div class="ai-custom-form-button-group-{{ ai_gen_id }}">
+        <button type="button" class="ai-custom-form-button-{{ ai_gen_id }} secondary" data-back-step2>
+          BACK
+        </button>
+        <button type="button" class="ai-custom-form-button-{{ ai_gen_id }}" data-continue-step2>
+          CONTINUE
+        </button>
+      </div>
+    </div>
+    <!-- End Step 2 -->
+
+    <!-- Step 3: Review & User Info -->
+    <div class="ai-custom-form-step-{{ ai_gen_id }}" data-step="3">
+      <h2 class="ai-custom-form-heading-{{ ai_gen_id }}">Review Your Design</h2>
+
+      <div class="ai-custom-form-review-section-{{ ai_gen_id }}">
+        <h3>
+          Design Details
+          <span class="ai-custom-form-edit-link-{{ ai_gen_id }}" data-edit-step="1">✎ Edit</span>
+        </h3>
+        <div id="review-step1-{{ ai_gen_id }}">
+          <!-- Will be populated by JavaScript -->
+        </div>
+      </div>
+
+      <div class="ai-custom-form-review-section-{{ ai_gen_id }}">
+        <h3>
+          Diamond Specifications
+          <span class="ai-custom-form-edit-link-{{ ai_gen_id }}" data-edit-step="2">✎ Edit</span>
+        </h3>
+        <div id="review-step2-{{ ai_gen_id }}">
+          <!-- Will be populated by JavaScript -->
+        </div>
+      </div>
+
+      <div class="ai-custom-form-section-{{ ai_gen_id }}">
+        <h3 class="ai-custom-form-title-{{ ai_gen_id }}">Your Information</h3>
+        
+        <div class="ai-custom-form-field-{{ ai_gen_id }}">
+          <label class="ai-custom-form-label-{{ ai_gen_id }}">Email *</label>
+          <input type="email" id="email-{{ ai_gen_id }}" class="ai-custom-form-input-{{ ai_gen_id }}" placeholder="your@email.com" data-field="email">
+        </div>
+
+        <div class="ai-custom-form-checkbox-wrapper-{{ ai_gen_id }}">
+          <input type="checkbox" id="terms-{{ ai_gen_id }}" data-field="terms_accepted">
+          <label for="terms-{{ ai_gen_id }}">
+            I have read and agree to the <a href="/pages/terms" target="_blank" style="color: #8B4513; text-decoration: underline;">Terms & Conditions</a> and <a href="/pages/privacy" target="_blank" style="color: #8B4513; text-decoration: underline;">Privacy Policy</a>
+          </label>
+        </div>
+
+        <div class="ai-custom-form-two-column-{{ ai_gen_id }}">
+          <div class="ai-custom-form-field-{{ ai_gen_id }}">
+            <label class="ai-custom-form-label-{{ ai_gen_id }}">First Name</label>
+            <input type="text" id="first-name-{{ ai_gen_id }}" class="ai-custom-form-input-{{ ai_gen_id }}" placeholder="First Name" data-field="first_name">
+          </div>
+          <div class="ai-custom-form-field-{{ ai_gen_id }}">
+            <label class="ai-custom-form-label-{{ ai_gen_id }}">Last Name</label>
+            <input type="text" id="last-name-{{ ai_gen_id }}" class="ai-custom-form-input-{{ ai_gen_id }}" placeholder="Last Name" data-field="last_name">
+          </div>
+        </div>
+
+        <div class="ai-custom-form-field-{{ ai_gen_id }}">
+          <label class="ai-custom-form-label-{{ ai_gen_id }}">Mobile No. (US +1)</label>
+          <input type="tel" id="phone-{{ ai_gen_id }}" class="ai-custom-form-input-{{ ai_gen_id }}" placeholder="+1 (555) 123-4567" data-field="phone">
+        </div>
+
+        <div class="ai-custom-form-field-{{ ai_gen_id }}">
+          <label class="ai-custom-form-label-{{ ai_gen_id }}">Create Password</label>
+          <input type="password" id="password-{{ ai_gen_id }}" class="ai-custom-form-input-{{ ai_gen_id }}" placeholder="Password" data-field="password">
+        </div>
+
+        <div class="ai-custom-form-field-{{ ai_gen_id }}">
+          <label class="ai-custom-form-label-{{ ai_gen_id }}">Reason for Custom Request</label>
+          <select id="reason-{{ ai_gen_id }}" class="ai-custom-form-select-{{ ai_gen_id }}" data-field="reason">
+            <option value="">Select Reason</option>
+            <option value="Engagement">Engagement</option>
+            <option value="Anniversary">Anniversary</option>
+            <option value="Birthday">Birthday</option>
+            <option value="Gift">Gift</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="ai-custom-form-field-{{ ai_gen_id }}">
+          <label class="ai-custom-form-label-{{ ai_gen_id }}">Date Needed</label>
+          <input type="date" id="date-needed-{{ ai_gen_id }}" class="ai-custom-form-input-{{ ai_gen_id }}" data-field="date_needed">
+        </div>
+
+        <p class="ai-custom-form-note-regular-{{ ai_gen_id }}" style="margin-top: 20px;">
+          By submitting this request, you confirm that you have read and agree to our terms and conditions. Our jewelry experts will review your design and contact you within 4 business days.
+        </p>
+      </div>
+
+      <div class="ai-custom-form-button-group-{{ ai_gen_id }}">
+        <button type="button" class="ai-custom-form-button-{{ ai_gen_id }} secondary" data-back-step3>
+          BACK
+        </button>
+        <button type="button" class="ai-custom-form-button-{{ ai_gen_id }}" data-submit-form>
+          SUBMIT REQUEST
+        </button>
+      </div>
+    </div>
+    <!-- End Step 3 -->
+
+    <!-- Step 4: Thank You -->
+    <div class="ai-custom-form-step-{{ ai_gen_id }}" data-step="4">
+      <div class="ai-custom-form-thank-you-{{ ai_gen_id }}">
+        <h2>Thank you for sending us your inspiration!</h2>
+        <p>
+          Our Jewelry Experts will be curating your perfect engagement rings for you.
+        </p>
+        <p>
+          Within four (4) business days, we'll send you an email with a link to your design. Review your design closely. You can either order it right online or speak to one of our Jewelry Specialists about any changes you would like to make.
+        </p>
+        <button type="button" class="ai-custom-form-button-{{ ai_gen_id }}" onclick="window.location.href='/'">
+          CONTINUE SHOPPING
+        </button>
+      </div>
+    </div>
+    <!-- End Step 4 -->
+  </div>
+</custom-engagement-form-{{ ai_gen_id }}>
+
+<script>
+  (function() {
+    class CustomEngagementForm{{ ai_gen_id }} extends HTMLElement {
+      constructor() {
+        super();
+        this.currentStep = 1;
+        this.formData = {
+          shape: 'Round',
+          carat: '3.00',
+          diamond_price: 3475
+        };
+      }
+
+      connectedCallback() {
+        console.log('[INIT] ========== CUSTOM ENGAGEMENT FORM INITIALIZED ==========');
+        console.log('[INIT] Form ID: {{ ai_gen_id }}');
+        
+        this.loadFromLocalStorage();
+        console.log('[INIT] Loaded data from localStorage:', this.formData);
+        
+        this.setupFileInputs();
+        console.log('[INIT] File inputs setup complete');
+        
+        this.setupMetalSelection();
+        console.log('[INIT] Metal selection setup complete');
+        
+        this.setupStepNavigation();
+        console.log('[INIT] Step navigation setup complete');
+        
+        this.setupDiamondSelectors();
+        console.log('[INIT] Diamond selectors setup complete');
+        
+        this.setupReviewEditing();
+        console.log('[INIT] Review editing setup complete');
+        
+        this.setupCharacterCounter();
+        console.log('[INIT] Character counter setup complete');
+        
+        this.populateFormFromData();
+        console.log('[INIT] Form populated from saved data');
+        
+        console.log('[INIT] ========== INITIALIZATION COMPLETE ==========');
+      }
+
+      // Character Counter for Textarea
+      setupCharacterCounter() {
+        const textarea = this.querySelector('#description-{{ ai_gen_id }}');
+        const counterEl = textarea ? textarea.parentElement.querySelector('.ai-custom-form-note-{{ ai_gen_id }}') : null;
+        
+        if (textarea && counterEl) {
+          const updateCounter = () => {
+            const count = textarea.value.length;
+            counterEl.textContent = `${count} CHARACTERS`;
+          };
+          
+          textarea.addEventListener('input', updateCounter);
+          updateCounter(); // Initial count
+        }
+      }
+
+      // LocalStorage Management
+      saveToLocalStorage() {
+        try {
+          localStorage.setItem('customEngagementForm_{{ ai_gen_id }}', JSON.stringify(this.formData));
+        } catch (e) {
+          console.error('Failed to save to localStorage', e);
+        }
+      }
+
+      loadFromLocalStorage() {
+        try {
+          const saved = localStorage.getItem('customEngagementForm_{{ ai_gen_id }}');
+          if (saved) {
+            this.formData = { ...this.formData, ...JSON.parse(saved) };
+          }
+        } catch (e) {
+          console.error('Failed to load from localStorage', e);
+        }
+      }
+
+      clearLocalStorage() {
+        try {
+          localStorage.removeItem('customEngagementForm_{{ ai_gen_id }}');
+        } catch (e) {
+          console.error('Failed to clear localStorage', e);
+        }
+      }
+
+      // Step Navigation
+      showStep(stepNumber) {
+        console.log(`[STEP NAVIGATION] Moving to Step ${stepNumber}`);
+        console.log('[STEP NAVIGATION] Current form data:', this.formData);
+        
+        const steps = this.querySelectorAll('[data-step]');
+        steps.forEach(step => {
+          step.classList.remove('active');
+          if (parseInt(step.getAttribute('data-step')) === stepNumber) {
+            step.classList.add('active');
+          }
+        });
+        this.currentStep = stepNumber;
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        console.log(`[STEP NAVIGATION] Successfully moved to Step ${stepNumber}`);
+      }
+
+      setupStepNavigation() {
+        // Step 1 Continue
+        const continueStep1 = this.querySelector('[data-continue-step1]');
+        if (continueStep1) {
+          continueStep1.addEventListener('click', () => {
+            if (this.validateStep1()) {
+              this.collectFormData();
+              this.saveToLocalStorage();
+              this.showStep(2);
+            }
+          });
+        }
+
+        // Step 2 Navigation
+        const backStep2 = this.querySelector('[data-back-step2]');
+        const continueStep2 = this.querySelector('[data-continue-step2]');
+        
+        if (backStep2) {
+          backStep2.addEventListener('click', () => {
+            this.collectFormData();
+            this.saveToLocalStorage();
+            this.showStep(1);
+          });
+        }
+
+        if (continueStep2) {
+          continueStep2.addEventListener('click', () => {
+            this.collectFormData();
+            this.saveToLocalStorage();
+            this.populateReview();
+            this.showStep(3);
+          });
+        }
+
+        // Step 3 Navigation
+        const backStep3 = this.querySelector('[data-back-step3]');
+        const submitForm = this.querySelector('[data-submit-form]');
+        
+        if (backStep3) {
+          backStep3.addEventListener('click', () => {
+            this.collectFormData();
+            this.saveToLocalStorage();
+            this.showStep(2);
+          });
+        }
+
+        if (submitForm) {
+          submitForm.addEventListener('click', () => {
+            if (this.validateStep3()) {
+              this.collectFormData();
+              this.submitFormData();
+            }
+          });
+        }
+      }
+
+      // Form Data Collection
+      collectFormData() {
+        console.log('[DATA COLLECTION] Starting data collection...');
+        
+        const fields = this.querySelectorAll('[data-field]');
+        fields.forEach(field => {
+          const fieldName = field.getAttribute('data-field');
+          if (field.type === 'radio') {
+            if (field.checked) {
+              this.formData[fieldName] = field.value;
+              console.log(`[DATA COLLECTION] Radio field "${fieldName}": ${field.value}`);
+            }
+          } else if (field.type === 'checkbox') {
+            this.formData[fieldName] = field.checked;
+            console.log(`[DATA COLLECTION] Checkbox field "${fieldName}": ${field.checked}`);
+          } else {
+            this.formData[fieldName] = field.value;
+            console.log(`[DATA COLLECTION] Field "${fieldName}": ${field.value}`);
+          }
+        });
+
+        // Collect file names
+        const fileInput1 = this.querySelector('[data-file-input="1"]');
+        const fileInput2 = this.querySelector('[data-file-input="2"]');
+        if (fileInput1 && fileInput1.files[0]) {
+          this.formData.file1_name = fileInput1.files[0].name;
+          console.log(`[DATA COLLECTION] File 1: ${fileInput1.files[0].name}`);
+        }
+        if (fileInput2 && fileInput2.files[0]) {
+          this.formData.file2_name = fileInput2.files[0].name;
+          console.log(`[DATA COLLECTION] File 2: ${fileInput2.files[0].name}`);
+        }
+        
+        console.log('[DATA COLLECTION] Complete form data:', this.formData);
+      }
+
+      populateFormFromData() {
+        Object.keys(this.formData).forEach(key => {
+          const field = this.querySelector(`[data-field="${key}"]`);
+          if (field) {
+            if (field.type === 'radio') {
+              if (field.value === this.formData[key]) {
+                field.checked = true;
+                field.dispatchEvent(new Event('change'));
+              }
+            } else if (field.type === 'checkbox') {
+              field.checked = this.formData[key];
+            } else {
+              field.value = this.formData[key];
+            }
+          }
+        });
+
+        // Update character counter if description exists
+        const textarea = this.querySelector('#description-{{ ai_gen_id }}');
+        if (textarea && textarea.value) {
+          textarea.dispatchEvent(new Event('input'));
+        }
+      }
+
+      // Validation
+      validateStep1() {
+        console.log('[VALIDATION] Validating Step 1...');
+        
+        const description = this.querySelector('#description-{{ ai_gen_id }}');
+        const ringSize = this.querySelector('#ring-size-{{ ai_gen_id }}');
+        const metalColor = this.querySelector('input[name="metal_color_{{ ai_gen_id }}"]:checked');
+
+        console.log('[VALIDATION] Description length:', description?.value?.trim()?.length || 0);
+        console.log('[VALIDATION] Metal color selected:', metalColor?.value || 'None');
+        console.log('[VALIDATION] Ring size selected:', ringSize?.value || 'None');
+
+        if (!description || description.value.trim().length < 15) {
+          console.log('[VALIDATION] ❌ FAILED: Description too short');
+          alert('Please provide a description of at least 15 characters.');
+          description && description.focus();
+          return false;
+        }
+
+        if (!metalColor) {
+          console.log('[VALIDATION] ❌ FAILED: No metal color selected');
+          alert('Please select a metal color.');
+          return false;
+        }
+
+        if (!ringSize || !ringSize.value) {
+          console.log('[VALIDATION] ❌ FAILED: No ring size selected');
+          alert('Please select a ring size.');
+          ringSize && ringSize.focus();
+          return false;
+        }
+
+        console.log('[VALIDATION] ✅ Step 1 validation passed');
+        return true;
+      }
+
+      validateStep3() {
+        console.log('[VALIDATION] Validating Step 3...');
+        
+        const email = this.querySelector('#email-{{ ai_gen_id }}');
+        const terms = this.querySelector('#terms-{{ ai_gen_id }}');
+
+        console.log('[VALIDATION] Email:', email?.value || 'None');
+        console.log('[VALIDATION] Email valid:', email?.validity?.valid || false);
+        console.log('[VALIDATION] Terms accepted:', terms?.checked || false);
+
+        if (!email || !email.value || !email.validity.valid) {
+          console.log('[VALIDATION] ❌ FAILED: Invalid email');
+          alert('Please enter a valid email address.');
+          email && email.focus();
+          return false;
+        }
+
+        if (!terms || !terms.checked) {
+          console.log('[VALIDATION] ❌ FAILED: Terms not accepted');
+          alert('Please accept the terms and conditions.');
+          return false;
+        }
+
+        console.log('[VALIDATION] ✅ Step 3 validation passed');
+        return true;
+      }
+
+      // File Upload Handling
+      setupFileInputs() {
+        const fileInputs = this.querySelectorAll('[data-file-input]');
+        const fileTriggers = this.querySelectorAll('[data-file-trigger]');
+
+        fileTriggers.forEach((trigger) => {
+          trigger.addEventListener('click', (e) => {
+            e.preventDefault();
+            const index = trigger.getAttribute('data-file-trigger');
+            const input = this.querySelector(`[data-file-input="${index}"]`);
+            input && input.click();
+          });
+        });
+
+        fileInputs.forEach((input) => {
+          input.addEventListener('change', (e) => {
+            const index = input.getAttribute('data-file-input');
+            const preview = this.querySelector(`[data-file-preview="${index}"]`);
+            const file = e.target.files[0];
+
+            if (file) {
+              if (file.size > 5 * 1024 * 1024) {
+                alert('File size must be less than 5MB');
+                input.value = '';
+                preview && (preview.innerHTML = '');
+                return;
+              }
+
+              const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
+              if (!validTypes.includes(file.type)) {
+                alert('Only JPG, PNG, and WEBP files are allowed');
+                input.value = '';
+                preview && (preview.innerHTML = '');
+                return;
+              }
+
+              if (preview) {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                  preview.innerHTML = `<div style="margin-top: 10px;">View ${index}: ${file.name}<br><img src="${e.target.result}" style="max-width: 100px; max-height: 100px; margin-top: 5px; border: 1px solid #CCC; border-radius: 4px;"></div>`;
+                };
+                reader.readAsDataURL(file);
+              }
+            } else {
+              preview && (preview.innerHTML = '');
+            }
+          });
+        });
+      }
+
+      // Metal Selection
+      setupMetalSelection() {
+        const metalRadios = this.querySelectorAll('[data-metal-radio]');
+        const metalCircles = this.querySelectorAll('[data-metal-circle]');
+        const metalSelectedDisplay = this.querySelector('#metal-selected-{{ ai_gen_id }}');
+
+        metalRadios.forEach((radio, index) => {
+          radio.addEventListener('change', () => {
+            metalCircles.forEach((circle) => {
+              circle.classList.remove('selected');
+            });
+
+            if (radio.checked && metalCircles[index]) {
+              metalCircles[index].classList.add('selected');
+              if (metalSelectedDisplay) {
+                metalSelectedDisplay.textContent = `Selected: ${radio.value}`;
+              }
+            }
+          });
+
+          if (metalCircles[index]) {
+            metalCircles[index].addEventListener('click', () => {
+              radio.checked = true;
+              radio.dispatchEvent(new Event('change'));
+            });
+          }
+        });
+      }
+
+      // Diamond Selectors
+      setupDiamondSelectors() {
+        // Shape Selector
+        const shapeItems = this.querySelectorAll('[data-shape]');
+        shapeItems.forEach(item => {
+          item.addEventListener('click', () => {
+            shapeItems.forEach(s => s.classList.remove('selected'));
+            item.classList.add('selected');
+            this.formData.shape = item.getAttribute('data-shape');
+            this.updateDiamondDisplay();
+          });
+        });
+
+        // Carat Selector
+        const caratValues = this.querySelectorAll('[data-carat]');
+        caratValues.forEach(item => {
+          item.addEventListener('click', () => {
+            caratValues.forEach(c => c.classList.remove('selected'));
+            item.classList.add('selected');
+            this.formData.carat = item.getAttribute('data-carat');
+            this.updateDiamondDisplay();
+          });
+        });
+
+        // Diamond Option Radio
+        const diamondOptions = this.querySelectorAll('input[name="diamond_option_{{ ai_gen_id }}"]');
+        diamondOptions.forEach(option => {
+          option.addEventListener('change', () => {
+            const optionDivs = this.querySelectorAll('.ai-custom-form-diamond-option-{{ ai_gen_id }}');
+            optionDivs.forEach(div => div.classList.remove('selected'));
+            option.closest('.ai-custom-form-diamond-option-{{ ai_gen_id }}').classList.add('selected');
+          });
+        });
+      }
+
+      updateDiamondDisplay() {
+        const price = Math.round(parseFloat(this.formData.carat) * 1158);
+        this.formData.diamond_price = price;
+        
+        const priceEl = this.querySelector('#diamond-price-{{ ai_gen_id }}');
+        const infoEl = this.querySelector('#diamond-info-{{ ai_gen_id }}');
+        
+        if (priceEl) {
+          priceEl.textContent = `$${price.toLocaleString()}`;
+        }
+        
+        if (infoEl) {
+          infoEl.innerHTML = `<strong>${this.formData.shape} - ${this.formData.carat} ct</strong><br>Price - <span id="diamond-price-{{ ai_gen_id }}">$${price.toLocaleString()}</span>`;
+        }
+      }
+
+      // Review Population
+      populateReview() {
+        const reviewStep1 = this.querySelector('#review-step1-{{ ai_gen_id }}');
+        const reviewStep2 = this.querySelector('#review-step2-{{ ai_gen_id }}');
+
+        if (reviewStep1) {
+          let html = '';
+          if (this.formData.file1_name) html += `<div class="ai-custom-form-review-item-{{ ai_gen_id }}"><span class="ai-custom-form-review-label-{{ ai_gen_id }}">Image 1</span><span class="ai-custom-form-review-value-{{ ai_gen_id }}">${this.formData.file1_name}</span></div>`;
+          if (this.formData.file2_name) html += `<div class="ai-custom-form-review-item-{{ ai_gen_id }}"><span class="ai-custom-form-review-label-{{ ai_gen_id }}">Image 2</span><span class="ai-custom-form-review-value-{{ ai_gen_id }}">${this.formData.file2_name}</span></div>`;
+          if (this.formData.image_url) html += `<div class="ai-custom-form-review-item-{{ ai_gen_id }}"><span class="ai-custom-form-review-label-{{ ai_gen_id }}">Image URL</span><span class="ai-custom-form-review-value-{{ ai_gen_id }}">${this.formData.image_url}</span></div>`;
+          if (this.formData.description) html += `<div class="ai-custom-form-review-item-{{ ai_gen_id }}"><span class="ai-custom-form-review-label-{{ ai_gen_id }}">Description</span><span class="ai-custom-form-review-value-{{ ai_gen_id }}">${this.formData.description.substring(0, 100)}...</span></div>`;
+          if (this.formData.metal_color) html += `<div class="ai-custom-form-review-item-{{ ai_gen_id }}"><span class="ai-custom-form-review-label-{{ ai_gen_id }}">Metal Color</span><span class="ai-custom-form-review-value-{{ ai_gen_id }}">${this.formData.metal_color}</span></div>`;
+          if (this.formData.ring_size) html += `<div class="ai-custom-form-review-item-{{ ai_gen_id }}"><span class="ai-custom-form-review-label-{{ ai_gen_id }}">Ring Size</span><span class="ai-custom-form-review-value-{{ ai_gen_id }}">${this.formData.ring_size}</span></div>`;
+          reviewStep1.innerHTML = html;
+        }
+
+        if (reviewStep2) {
+          let html = '';
+          if (this.formData.diamond_option) html += `<div class="ai-custom-form-review-item-{{ ai_gen_id }}"><span class="ai-custom-form-review-label-{{ ai_gen_id }}">Diamond Option</span><span class="ai-custom-form-review-value-{{ ai_gen_id }}">${this.formData.diamond_option === 'specify' ? 'Specify Requirements' : 'Choose Specific'}</span></div>`;
+          if (this.formData.shape) html += `<div class="ai-custom-form-review-item-{{ ai_gen_id }}"><span class="ai-custom-form-review-label-{{ ai_gen_id }}">Shape</span><span class="ai-custom-form-review-value-{{ ai_gen_id }}">${this.formData.shape}</span></div>`;
+          if (this.formData.carat) html += `<div class="ai-custom-form-review-item-{{ ai_gen_id }}"><span class="ai-custom-form-review-label-{{ ai_gen_id }}">Carat</span><span class="ai-custom-form-review-value-{{ ai_gen_id }}">${this.formData.carat} ct</span></div>`;
+          if (this.formData.diamond_price) html += `<div class="ai-custom-form-review-item-{{ ai_gen_id }}"><span class="ai-custom-form-review-label-{{ ai_gen_id }}">Estimated Price</span><span class="ai-custom-form-review-value-{{ ai_gen_id }}">$${this.formData.diamond_price.toLocaleString()}</span></div>`;
+          if (this.formData.min_carat) html += `<div class="ai-custom-form-review-item-{{ ai_gen_id }}"><span class="ai-custom-form-review-label-{{ ai_gen_id }}">Min Carat</span><span class="ai-custom-form-review-value-{{ ai_gen_id }}">${this.formData.min_carat}</span></div>`;
+          if (this.formData.cut) html += `<div class="ai-custom-form-review-item-{{ ai_gen_id }}"><span class="ai-custom-form-review-label-{{ ai_gen_id }}">Cut</span><span class="ai-custom-form-review-value-{{ ai_gen_id }}">${this.formData.cut}</span></div>`;
+          if (this.formData.color) html += `<div class="ai-custom-form-review-item-{{ ai_gen_id }}"><span class="ai-custom-form-review-label-{{ ai_gen_id }}">Color</span><span class="ai-custom-form-review-value-{{ ai_gen_id }}">${this.formData.color}</span></div>`;
+          if (this.formData.clarity) html += `<div class="ai-custom-form-review-item-{{ ai_gen_id }}"><span class="ai-custom-form-review-label-{{ ai_gen_id }}">Clarity</span><span class="ai-custom-form-review-value-{{ ai_gen_id }}">${this.formData.clarity}</span></div>`;
+          reviewStep2.innerHTML = html;
+        }
+      }
+
+      setupReviewEditing() {
+        const editLinks = this.querySelectorAll('[data-edit-step]');
+        editLinks.forEach(link => {
+          link.addEventListener('click', () => {
+            const step = parseInt(link.getAttribute('data-edit-step'));
+            this.showStep(step);
+          });
+        });
+      }
+
+      // Form Submission
+      async submitFormData() {
+        console.log('[FORM SUBMISSION] ========== STARTING FORM SUBMISSION ==========');
+        this.collectFormData();
+        
+        const submitButton = this.querySelector('[data-submit-form]');
+        if (submitButton) {
+          submitButton.disabled = true;
+          submitButton.textContent = 'SUBMITTING...';
+        }
+
+        try {
+          // Format all data as message
+          let message = 'Custom Engagement Ring Request\n\n';
+          message += '=== Design Details ===\n';
+          message += `Description: ${this.formData.description || 'N/A'}\n`;
+          message += `Metal Color: ${this.formData.metal_color || 'N/A'}\n`;
+          message += `Ring Size: ${this.formData.ring_size || 'N/A'}\n`;
+          message += `Image URL: ${this.formData.image_url || 'N/A'}\n`;
+          message += `Files: ${this.formData.file1_name || ''} ${this.formData.file2_name || ''}\n\n`;
+          
+          message += '=== Diamond Specifications ===\n';
+          message += `Option: ${this.formData.diamond_option || 'N/A'}\n`;
+          message += `Shape: ${this.formData.shape || 'N/A'}\n`;
+          message += `Carat: ${this.formData.carat || 'N/A'} ct\n`;
+          message += `Estimated Price: $${(this.formData.diamond_price || 0).toLocaleString()}\n`;
+          message += `Min Carat: ${this.formData.min_carat || 'N/A'}\n`;
+          message += `Cut: ${this.formData.cut || 'N/A'}\n`;
+          message += `Color: ${this.formData.color || 'N/A'}\n`;
+          message += `Clarity: ${this.formData.clarity || 'N/A'}\n\n`;
+          
+          message += '=== Customer Information ===\n';
+          message += `Name: ${this.formData.first_name || ''} ${this.formData.last_name || ''}\n`;
+          message += `Phone: ${this.formData.phone || 'N/A'}\n`;
+          message += `Reason: ${this.formData.reason || 'N/A'}\n`;
+          message += `Date Needed: ${this.formData.date_needed || 'N/A'}\n`;
+          
+          console.log('[FORM SUBMISSION] Message to be sent:', message);
+
+          // SOLUTION: Use Formspree or similar service to bypass CAPTCHA
+          const FORMSPREE_ENDPOINT = 'https://formspree.io/f/xkgpbkjn';
+          const USE_FORMSPREE = true;
+          
+          console.log('[FORM SUBMISSION] Preparing submission...');
+          console.log('[FORM SUBMISSION] Using Formspree:', USE_FORMSPREE);
+          console.log('[FORM SUBMISSION] Endpoint:', FORMSPREE_ENDPOINT);
+          
+          if (USE_FORMSPREE) {
+            // Use Formspree for production
+            console.log('[FORM SUBMISSION] Submitting to Formspree...');
+            
+            const response = await fetch(FORMSPREE_ENDPOINT, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+              },
+              body: JSON.stringify({
+                email: this.formData.email,
+                name: `${this.formData.first_name || ''} ${this.formData.last_name || ''}`.trim(),
+                phone: this.formData.phone,
+                message: message,
+                // Individual fields for better organization
+                description: this.formData.description,
+                metal_color: this.formData.metal_color,
+                ring_size: this.formData.ring_size,
+                image_url: this.formData.image_url,
+                file1: this.formData.file1_name,
+                file2: this.formData.file2_name,
+                diamond_option: this.formData.diamond_option,
+                diamond_shape: this.formData.shape,
+                diamond_carat: this.formData.carat,
+                diamond_price: `$${(this.formData.diamond_price || 0).toLocaleString()}`,
+                diamond_min_carat: this.formData.min_carat,
+                diamond_cut: this.formData.cut,
+                diamond_color: this.formData.color,
+                diamond_clarity: this.formData.clarity,
+                reason: this.formData.reason,
+                date_needed: this.formData.date_needed,
+                _subject: 'Custom Engagement Ring Request - Azalea Jewelry',
+                _replyto: this.formData.email
+              })
+            });
+
+            console.log('[FORM SUBMISSION] Response status:', response.status);
+            
+            if (response.ok) {
+              console.log('[FORM SUBMISSION] ✅ SUCCESS! Form submitted via Formspree');
+              this.clearLocalStorage();
+              this.showStep(4);
+            } else {
+              const errorData = await response.json();
+              console.error('[FORM SUBMISSION] Formspree error:', errorData);
+              throw new Error('Formspree submission failed');
+            }
+            
+          } else {
+            // Fallback: Save locally and open email client
+            console.log('[FORM SUBMISSION] Using fallback method (mailto)...');
+            console.log('[FORM SUBMISSION] ⚠️ To enable automatic submission, set up Formspree:');
+            console.log('[FORM SUBMISSION] 1. Go to https://formspree.io');
+            console.log('[FORM SUBMISSION] 2. Create a form and get your form ID');
+            console.log('[FORM SUBMISSION] 3. Replace YOUR_FORM_ID in the code');
+            console.log('[FORM SUBMISSION] 4. Set USE_FORMSPREE = true');
+            
+            // Save submission data locally
+            const submissionData = {
+              timestamp: new Date().toISOString(),
+              email: this.formData.email,
+              name: `${this.formData.first_name || ''} ${this.formData.last_name || ''}`.trim(),
+              phone: this.formData.phone,
+              formData: this.formData,
+              message: message
+            };
+            
+            const submissions = JSON.parse(localStorage.getItem('customEngagementForm_submissions') || '[]');
+            submissions.push(submissionData);
+            localStorage.setItem('customEngagementForm_submissions', JSON.stringify(submissions));
+            
+            console.log('[FORM SUBMISSION] Submission saved locally:', submissionData);
+            console.log('[FORM SUBMISSION] View all submissions: localStorage.getItem("customEngagementForm_submissions")');
+            
+            // Open email client as backup
+            const emailTo = 'masumbinshaukat@gmail.com'; // ⚠️ Replace with your email
+            const emailSubject = 'Custom Engagement Ring Request';
+            const emailBody = encodeURIComponent(message);
+            const mailtoLink = `mailto:${emailTo}?subject=${encodeURIComponent(emailSubject)}&body=${emailBody}`;
+            
+            try {
+              const tempLink = document.createElement('a');
+              tempLink.href = mailtoLink;
+              tempLink.style.display = 'none';
+              document.body.appendChild(tempLink);
+              tempLink.click();
+              document.body.removeChild(tempLink);
+              console.log('[FORM SUBMISSION] Email client opened');
+            } catch (e) {
+              console.warn('[FORM SUBMISSION] Could not open email client:', e);
+            }
+            
+            // Show success message
+            console.log('[FORM SUBMISSION] ✅ SUCCESS! Showing thank you page...');
+            this.clearLocalStorage();
+            this.showStep(4);
+          }
+          
+          console.log('[FORM SUBMISSION] Form submission complete!')
+        } catch (error) {
+          console.error('[FORM SUBMISSION] ❌ ERROR:', error);
+          console.error('[FORM SUBMISSION] Error details:', {
+            message: error.message,
+            stack: error.stack
+          });
+          
+          alert('There was an error submitting your request. Please try again or contact us directly.');
+          
+          if (submitButton) {
+            submitButton.disabled = false;
+            submitButton.textContent = 'SUBMIT REQUEST';
+          }
+        }
+        
+        console.log('[FORM SUBMISSION] ========== FORM SUBMISSION COMPLETE ==========');
+      }
+    }
+
+    customElements.define('custom-engagement-form-{{ ai_gen_id }}', CustomEngagementForm{{ ai_gen_id }});
+  })();
+</script>
+
+{% schema %}
+{
+  "name": "Custom engagement form",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Breadcrumb"
+    },
+    {
+      "type": "text",
+      "id": "breadcrumb_text",
+      "label": "Breadcrumb text",
+      "default": "Home / Truly Custom Engagement Rings"
+    },
+    {
+      "type": "header",
+      "content": "Upload section"
+    },
+    {
+      "type": "text",
+      "id": "upload_title",
+      "label": "Title",
+      "default": "Upload images or share a link"
+    },
+    {
+      "type": "text",
+      "id": "upload_note_1",
+      "label": "Note 1",
+      "default": "At least 1 image is required"
+    },
+    {
+      "type": "text",
+      "id": "upload_note_2",
+      "label": "Note 2",
+      "default": "The image should only be in jpg, jpeg, png or webp formats."
+    },
+    {
+      "type": "text",
+      "id": "upload_note_3",
+      "label": "Note 3",
+      "default": "File size should be less than 5MB"
+    },
+    {
+      "type": "text",
+      "id": "picture_label",
+      "label": "Picture label",
+      "default": "Picture"
+    },
+    {
+      "type": "text",
+      "id": "url_label",
+      "label": "URL label",
+      "default": "URL"
+    },
+    {
+      "type": "text",
+      "id": "url_placeholder",
+      "label": "URL placeholder",
+      "default": "Add URL"
+    },
+    {
+      "type": "header",
+      "content": "Description section"
+    },
+    {
+      "type": "text",
+      "id": "description_title",
+      "label": "Title",
+      "default": "Tell us more"
+    },
+    {
+      "type": "text",
+      "id": "description_note",
+      "label": "Note",
+      "default": "Tell us more about your dream ring."
+    },
+    {
+      "type": "text",
+      "id": "description_placeholder",
+      "label": "Placeholder",
+      "default": "Enter text."
+    },
+    {
+      "type": "header",
+      "content": "Options section"
+    },
+    {
+      "type": "text",
+      "id": "options_title",
+      "label": "Title",
+      "default": "Metal color & Ring size"
+    },
+    {
+      "type": "text",
+      "id": "options_note",
+      "label": "Note",
+      "default": "Please select your preferred metal color and ring size."
+    },
+    {
+      "type": "text",
+      "id": "ring_size_link_text",
+      "label": "Ring size link text",
+      "default": "Click Here"
+    },
+    {
+      "type": "url",
+      "id": "ring_size_link",
+      "label": "Ring size link"
+    },
+    {
+      "type": "text",
+      "id": "metal_color_label",
+      "label": "Metal color label",
+      "default": "Metal Color"
+    },
+    {
+      "type": "text",
+      "id": "ring_size_label",
+      "label": "Ring size label",
+      "default": "Ring Size"
+    },
+    {
+      "type": "text",
+      "id": "ring_size_placeholder",
+      "label": "Ring size placeholder",
+      "default": "Select ring size"
+    },
+    {
+      "type": "text",
+      "id": "find_ring_size_text",
+      "label": "Find ring size text",
+      "default": "Find Ring Size"
+    },
+    {
+      "type": "url",
+      "id": "find_ring_size_link",
+      "label": "Find ring size link"
+    },
+    {
+      "type": "header",
+      "content": "Submit button"
+    },
+    {
+      "type": "text",
+      "id": "submit_button_text",
+      "label": "Button text",
+      "default": "CONTINUE"
+    },
+    {
+      "type": "header",
+      "content": "Messages"
+    },
+    {
+      "type": "text",
+      "id": "success_message",
+      "label": "Success message",
+      "default": "Thank you! Your custom ring request has been submitted successfully."
+    },
+    {
+      "type": "text",
+      "id": "error_message",
+      "label": "Error message",
+      "default": "Please correct the errors and try again."
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom engagement form"
+    }
+  ]
+}
+{% endschema %}
