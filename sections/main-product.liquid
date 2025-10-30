@@ -116,98 +116,119 @@
       font-weight: 600;
     }
 
-    /* Metal Selector Styles */
+    /* Metal Selector Styles - Dropdown */
     .product__metal-selector-{{ section.id }} {
-      margin: 24px 0;
+      margin: 20px 0;
     }
 
     .product__metal-title-{{ section.id }} {
-      font-size: 14px;
-      font-weight: 600;
-      margin-bottom: 12px;
-      color: #333;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .product__metal-swatches-{{ section.id }} {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-    }
-
-    .product__metal-swatch-{{ section.id }} {
-      position: relative;
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      border: 2px solid #e0e0e0;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      background-size: cover;
-      background-position: center;
-      overflow: hidden;
-    }
-
-    .product__metal-swatch-{{ section.id }}::after {
-      content: "";
-      position: absolute;
-      top: -40%;
-      left: -40%;
-      width: 180%;
-      height: 180%;
-      background: linear-gradient(120deg, rgba(255, 255, 255, 0.6) 0%, rgba(255, 255, 255, 0) 60%);
-      transform: rotate(25deg);
-      pointer-events: none;
-    }
-
-    .product__metal-swatch-{{ section.id }}:hover {
-      transform: scale(1.1);
-      border-color: #666;
-    }
-
-    .product__metal-swatch-{{ section.id }}.active {
-      border-color: #000;
-      box-shadow: 0 0 0 2px #000;
-      transform: scale(1.05);
-    }
-
-    .product__metal-swatch-label-{{ section.id }} {
       font-size: 13px;
-      color: #666;
-      margin-top: 6px;
-      text-align: center;
-    }
-
-    /* Ring Size Selector */
-    .product__size-selector-{{ section.id }} {
-      margin: 24px 0;
-    }
-
-    .product__size-title-{{ section.id }} {
-      font-size: 14px;
       font-weight: 600;
-      margin-bottom: 12px;
+      margin-bottom: 8px;
       color: #333;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.8px;
     }
 
-    .product__size-dropdown-{{ section.id }} {
+    .product__metal-dropdown-{{ section.id }} {
       width: 100%;
-      padding: 12px 16px;
+      padding: 14px 16px;
       border: 1px solid #d0d0d0;
       border-radius: 4px;
       font-size: 14px;
       background-color: #fff;
       cursor: pointer;
       transition: border-color 0.2s ease;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23333' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      padding-right: 40px;
+    }
+
+    .product__metal-dropdown-{{ section.id }}:hover,
+    .product__metal-dropdown-{{ section.id }}:focus {
+      border-color: #000;
+      outline: none;
+    }
+
+    .product__metal-swatch-inline-{{ section.id }} {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      margin-right: 8px;
+      vertical-align: middle;
+      border: 1px solid #ddd;
+    }
+
+    /* Ring Size Selector */
+    .product__size-selector-{{ section.id }} {
+      margin: 20px 0;
+    }
+
+    .product__size-title-{{ section.id }} {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #333;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .product__size-dropdown-{{ section.id }} {
+      width: 100%;
+      padding: 14px 16px;
+      border: 1px solid #d0d0d0;
+      border-radius: 4px;
+      font-size: 14px;
+      background-color: #fff;
+      cursor: pointer;
+      transition: border-color 0.2s ease;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%23333' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 16px center;
+      padding-right: 40px;
     }
 
     .product__size-dropdown-{{ section.id }}:hover,
     .product__size-dropdown-{{ section.id }}:focus {
       border-color: #000;
       outline: none;
+    }
+
+    /* Product Features with Icons */
+    .product__features-{{ section.id }} {
+      margin: 24px 0;
+      padding: 20px 0;
+      border-top: 1px solid #e5e5e5;
+      border-bottom: 1px solid #e5e5e5;
+    }
+
+    .product__feature-item-{{ section.id }} {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 12px;
+      font-size: 13px;
+      color: #666;
+    }
+
+    .product__feature-item-{{ section.id }}:last-child {
+      margin-bottom: 0;
+    }
+
+    .product__feature-icon-{{ section.id }} {
+      width: 20px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+
+    .product__feature-icon-{{ section.id }} svg {
+      width: 100%;
+      height: 100%;
+      stroke: #333;
     }
 
     @media screen and (max-width: 749px) {
@@ -720,50 +741,41 @@
                   </div>
                 {%- endif -%}
 
-                {%- comment -%} Custom Metal Selector with Visual Swatches {%- endcomment -%}
-                {%- if product.variants.size > 1 -%}
-                  <div class="product__metal-selector-{{ section.id }}" {{ block.shopify_attributes }}>
-                    <div class="product__metal-title-{{ section.id }}">Metal</div>
-                    <div class="product__metal-swatches-{{ section.id }}">
-                      {%- assign displayed_variants = '' | split: ',' -%}
-                      {%- for variant in product.variants -%}
-                        {%- assign metal_type = variant.option1 | downcase -%}
-                        {%- unless displayed_variants contains metal_type -%}
-                          {%- assign displayed_variants = displayed_variants | push: metal_type -%}
-                          {%- assign is_selected = false -%}
-                          {%- if variant.id == product.selected_or_first_available_variant.id -%}
-                            {%- assign is_selected = true -%}
-                          {%- endif -%}
-                          
-                          {%- comment -%} Determine metal color gradient {%- endcomment -%}
-                          {%- assign metal_gradient = '#cccccc' -%}
-                          {%- if metal_type contains 'rose gold' or metal_type contains 'rose' -%}
-                            {%- assign metal_gradient = 'linear-gradient(135deg, #FAD6C3 10%, #EFB7A3 40%, #D9A29C 90%)' -%}
-                          {%- elsif metal_type contains 'yellow gold' or metal_type contains 'yellow' or metal_type contains 'gold' -%}
-                            {%- assign metal_gradient = 'linear-gradient(135deg, #F2DBA3 10%, #FAF8F3 50%, #D4AF37 90%)' -%}
-                          {%- elsif metal_type contains 'white gold' or metal_type contains 'white' or metal_type contains 'silver' or metal_type contains 'platinum' -%}
-                            {%- assign metal_gradient = 'linear-gradient(135deg, #E0E0E0 10%, #F8F8F8 50%, #C0C0C0 90%)' -%}
-                          {%- endif -%}
-                          
-                          <div style="text-align:center;">
-                            <button
-                              type="button"
-                              class="product__metal-swatch-{{ section.id }}{% if is_selected %} active{% endif %}"
-                              style="background: {{ metal_gradient }}"
-                              data-variant-id="{{ variant.id }}"
-                              data-variant-url="{{ variant.url }}"
-                              data-metal-type="{{ variant.option1 | escape }}"
-                              onclick="window.location.href='{{ variant.url }}'"
+                {%- comment -%} Custom Metal Selector - Dropdown {%- endcomment -%}
+                {%- if product.options_with_values.size > 0 -%}
+                  {%- for option in product.options_with_values -%}
+                    {%- assign option_name_lower = option.name | downcase -%}
+                    {%- if option_name_lower contains 'metal' or option_name_lower contains 'color' or option_name_lower contains 'material' or option.position == 1 -%}
+                      <div class="product__metal-selector-{{ section.id }}" {{ block.shopify_attributes }}>
+                        <div class="product__metal-title-{{ section.id }}">{{ option.name }}</div>
+                        <select
+                          class="product__metal-dropdown-{{ section.id }}"
+                          name="options[{{ option.name | escape }}]"
+                          form="{{ product_form_id }}"
+                          onchange="this.form.dispatchEvent(new Event('change', { bubbles: true }))"
+                        >
+                          {%- for value in option.values -%}
+                            {%- assign value_lower = value | downcase -%}
+                            {%- assign metal_color = '#cccccc' -%}
+                            {%- if value_lower contains 'rose gold' or value_lower contains 'rose' -%}
+                              {%- assign metal_color = 'linear-gradient(135deg, #FAD6C3, #D9A29C)' -%}
+                            {%- elsif value_lower contains 'yellow gold' or value_lower contains 'yellow' or value_lower contains 'gold' -%}
+                              {%- assign metal_color = 'linear-gradient(135deg, #F2DBA3, #D4AF37)' -%}
+                            {%- elsif value_lower contains 'white gold' or value_lower contains 'white' or value_lower contains 'silver' or value_lower contains 'platinum' -%}
+                              {%- assign metal_color = 'linear-gradient(135deg, #E0E0E0, #C0C0C0)' -%}
+                            {%- endif -%}
+                            
+                            <option
+                              value="{{ value | escape }}"
+                              {% if option.selected_value == value %}selected{% endif %}
                             >
-                            </button>
-                            <div class="product__metal-swatch-label-{{ section.id }}">
-                              {{ variant.option1 }}
-                            </div>
-                          </div>
-                        {%- endunless -%}
-                      {%- endfor -%}
-                    </div>
-                  </div>
+                              {{ value }}
+                            </option>
+                          {%- endfor -%}
+                        </select>
+                      </div>
+                    {%- endif -%}
+                  {%- endfor -%}
                 {%- endif -%}
 
                 {%- comment -%} Ring Size Selector {%- endcomment -%}
@@ -804,6 +816,49 @@
                   section_id: section.id,
                   show_pickup_availability: true
                 -%}
+                
+                {%- comment -%} Product Features with Icons {%- endcomment -%}
+                <div class="product__features-{{ section.id }}">
+                  <div class="product__feature-item-{{ section.id }}">
+                    <div class="product__feature-icon-{{ section.id }}">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                      </svg>
+                    </div>
+                    <span>Free Shipping on Orders Over $500</span>
+                  </div>
+                  
+                  <div class="product__feature-item-{{ section.id }}">
+                    <div class="product__feature-icon-{{ section.id }}">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <polyline points="1 20 1 14 7 14"></polyline>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                      </svg>
+                    </div>
+                    <span>30-Day Free Returns</span>
+                  </div>
+                  
+                  <div class="product__feature-item-{{ section.id }}">
+                    <div class="product__feature-icon-{{ section.id }}">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                        <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                      </svg>
+                    </div>
+                    <span>Secure Checkout</span>
+                  </div>
+                  
+                  <div class="product__feature-item-{{ section.id }}">
+                    <div class="product__feature-icon-{{ section.id }}">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                      </svg>
+                    </div>
+                    <span>Lifetime Warranty</span>
+                  </div>
+                </div>
               {%- when 'rating' -%}
                 {%- if product.metafields.reviews.rating.value != blank -%}
                   <div class="rating-wrapper">
